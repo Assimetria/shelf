@@ -1,0 +1,19 @@
+node_modules/
+dist/
+build/
+.env
+.env.local
+.env.*.local
+*.log
+.DS_Store
+.vscode/
+coverage/
+
+# Cryptographic key files — generated locally, never commit
+# RSA private key is stored here by npm run generate-keys
+server/.keys/
+
+# Database backups — keep directory tracked, ignore backup files
+backups/*.dump
+backups/*.dump.gz
+*.backup-insecure
