@@ -1,19 +1,22 @@
-const db = require('../../lib/@system/PostgreSQL')
-const fs = require('fs')
-const path = require('path')
+'use strict'
 
-async function run() {
-  const sql = fs.readFileSync(
-    path.join(__dirname, '../../schemas/@custom/pages.sql'),
-    'utf8',
-  )
+/**
+ * Migration 005 – Pages table
+ * Creates the pages table for CMS-style content management.
+ */
+
+const path = require('path')
+const fs = require('fs')
+
+const SCHEMAS_DIR = path.join(__dirname, '../../schemas/@custom')
+
+exports.up = async (db) => {
+  const sql = fs.readFileSync(path.join(SCHEMAS_DIR, 'pages.sql'), 'utf8')
   await db.none(sql)
-  console.log('[migrate] applied schema: pages')
-  console.log('[migrate] done')
-  process.exit(0)
+  console.log('[005_pages] applied schema: pages')
 }
 
-run().catch((err) => {
-  console.error('[migrate] error', err)
-  process.exit(1)
-})
+exports.down = async (db) => {
+  await db.none('DROP TABLE IF EXISTS pages CASCADE')
+  console.log('[005_pages] rolled back: pages')
+}
