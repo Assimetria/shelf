@@ -223,7 +223,16 @@ async function send({ to, subject, html, text, template, userId, replyTo, cc, bc
  */
 async function _trackEmail({ to, subject, template, messageId, provider, status = 'sent', error = null, userId }) {
   try {
-    const EmailLogRepo = require('../../../db/repos/@custom/EmailLogRepo')
+    // Optional: try to log email via custom EmailLogRepo if it exists
+    // @system should not have hard dependencies on @custom
+    let EmailLogRepo
+    try {
+      EmailLogRepo = require('../../../db/repos/@custom/EmailLogRepo')
+    } catch (_requireErr) {
+      // EmailLogRepo doesn't exist or isn't available — skip logging
+      return
+    }
+
     await EmailLogRepo.create({
       to_address: to,
       subject,
