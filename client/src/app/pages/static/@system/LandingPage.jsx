@@ -1,5 +1,6 @@
 // @system — Landing page: hero + features + CTA + footer
 // @custom — override info.ts values (name, tagline) and add your own sections below
+import { lazy, Suspense } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Check } from 'lucide-react'
 import { Button } from '../../../components/@system/ui/button'
@@ -7,10 +8,21 @@ import { Header } from '../../../components/@system/Header/Header'
 import { Footer } from '../../../components/@system/Footer/Footer'
 import { Card, CardContent } from '../../../components/@system/Card/Card'
 import { FeaturesSection } from '../../../components/@system/FeaturesSection'
-import { FAQ } from '../../../components/@custom/FAQ'
-import { HeroSection } from '../../../components/@custom/HeroSection/HeroSection'
 import { OgMeta } from '../../../components/@system/OgMeta/OgMeta'
 import { info } from '../../../../config/@system/info'
+
+// ─── Optional @custom components ─────────────────────────────────────────────
+// @system should not have hard dependencies on @custom — lazy load with fallback
+const FAQ = lazy(() =>
+  import('../../../components/@custom/FAQ')
+    .then((m) => ({ default: m.FAQ }))
+    .catch(() => ({ default: () => null }))
+)
+const HeroSection = lazy(() =>
+  import('../../../components/@custom/HeroSection/HeroSection')
+    .then((m) => ({ default: m.HeroSection }))
+    .catch(() => ({ default: () => null }))
+)
 
 const PLANS = [
   {
@@ -55,7 +67,9 @@ export function LandingPage() {
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       {/* @custom — override badge/headline/subtitle/CTA labels via props:    */}
       {/*   <HeroSection headline="Ship faster" subtitle="..." ctaLabel="..." /> */}
-      <HeroSection />
+      <Suspense fallback={null}>
+        <HeroSection />
+      </Suspense>
 
       {/* ── Features ─────────────────────────────────────────────────────── */}
       <FeaturesSection />
@@ -113,7 +127,9 @@ export function LandingPage() {
       </section>
 
       {/* ── FAQ ──────────────────────────────────────────────────────────── */}
-      <FAQ />
+      <Suspense fallback={null}>
+        <FAQ />
+      </Suspense>
 
       {/* ── Footer CTA ───────────────────────────────────────────────────── */}
       <section className="border-t bg-muted/30">

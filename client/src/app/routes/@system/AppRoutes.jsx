@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useState, useEffect } from 'react'
 import { useAuthContext } from '../../store/@system/auth'
 import { Spinner } from '../../components/@system/Loading/Spinner'
 import { ProtectedRoute } from '../../components/@system/ProtectedRoute/ProtectedRoute'
@@ -92,8 +92,9 @@ const IntegrationsPage = lazy(() =>
   import('../../pages/app/@system/IntegrationsPage').then((m) => ({ default: m.IntegrationsPage }))
 )
 
-// @custom routes imported from routes/@custom/index.tsx
-import { customRoutes } from '../@custom'
+// ─── Optional @custom routes ─────────────────────────────────────────────────
+// @system should not have hard dependencies on @custom — lazy load with fallback
+// Custom routes are loaded asynchronously and default to an empty array if unavailable.
 
 function PageFallback() {
   return (
@@ -112,6 +113,15 @@ function GuestRoute({ children }) {
 }
 
 export function AppRoutes() {
+  const [customRoutes, setCustomRoutes] = useState([])
+
+  // Load @custom routes if they exist, gracefully fall back to empty array
+  useEffect(() => {
+    import('../@custom')
+      .then((mod) => setCustomRoutes(mod.customRoutes ?? []))
+      .catch(() => setCustomRoutes([]))
+  }, [])
+
   return (
     <Suspense fallback={<PageFallback />}>
       <Routes>
