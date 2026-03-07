@@ -176,7 +176,6 @@ router.post('/users/email/verify', validate({ body: VerifyEmailBody }), async (r
 // ── Password Reset ────────────────────────────────────────────────────────
 
 // POST /api/users/password/request — generate a reset token and (conceptually) send an email
-// @custom — wire up SES / Resend / SendGrid to actually send the email
 router.post('/users/password/request', passwordResetLimiter, validate({ body: PasswordResetRequestBody }), async (req, res, next) => {
   try {
     const { email } = req.body

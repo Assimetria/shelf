@@ -1,5 +1,4 @@
 // @system — product identity config
-// Override these values per product in config/@custom/info.ts
 export const info = {
   name: 'ProductTemplate',
   tagline: 'Your product tagline here',
