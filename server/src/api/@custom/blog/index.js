@@ -13,7 +13,7 @@ const {
   BlogPostIdParams,
   BlogPostSlugParams,
   ListBlogPostsQuery,
-} = require('../../../lib/@custom/Validation/schemas/blog')
+} = require('../../../lib/@system/Validation/schemas/@custom/blog')
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
