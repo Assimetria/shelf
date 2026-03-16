@@ -1,10 +1,12 @@
 -- @system subscriptions table
 -- Full billing model: supports Stripe subscriptions, one-time purchases, trials,
 -- cancellation tracking, UTM attribution, and metadata for webhook state.
+--
+-- NOTE: brand_id column is NOT included here because brands table is created
+-- later (migration 011). Migration 011 adds brand_id via ALTER TABLE.
 CREATE TABLE IF NOT EXISTS subscriptions (
   id                      SERIAL PRIMARY KEY,
   user_id                 INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  brand_id                INTEGER REFERENCES brands(id) ON DELETE SET NULL,
   stripe_subscription_id  TEXT UNIQUE,       -- Stripe subscription ID (external_id)
   stripe_customer_id      TEXT,
   stripe_price_id         TEXT,
@@ -28,6 +30,5 @@ CREATE TABLE IF NOT EXISTS subscriptions (
 CREATE INDEX IF NOT EXISTS idx_subscriptions_user_id ON subscriptions(user_id);
 CREATE INDEX IF NOT EXISTS idx_subscriptions_stripe_customer_id ON subscriptions(stripe_customer_id);
 CREATE INDEX IF NOT EXISTS idx_subscriptions_stripe_subscription_id ON subscriptions(stripe_subscription_id);
-CREATE INDEX IF NOT EXISTS idx_subscriptions_brand_id ON subscriptions(brand_id);
 CREATE INDEX IF NOT EXISTS idx_subscriptions_status ON subscriptions(status);
 CREATE INDEX IF NOT EXISTS idx_subscriptions_created_at ON subscriptions(created_at);
