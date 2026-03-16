@@ -75,6 +75,10 @@ router.get('/blog', validate({ query: ListBlogPostsQuery }), async (req, res, ne
     const total = await BlogPostRepo.count({ status: 'published', category: category || undefined })
     res.json({ posts, total })
   } catch (err) {
+    // Gracefully handle missing blog_posts table (migration may not have run yet)
+    if (err.message && err.message.includes('relation "blog_posts" does not exist')) {
+      return res.json({ posts: [], total: 0 })
+    }
     next(err)
   }
 })
@@ -108,6 +112,9 @@ router.get('/blog/:slug', validate({ params: BlogPostSlugParams }), async (req, 
     }
     res.json({ post })
   } catch (err) {
+    if (err.message && err.message.includes('relation "blog_posts" does not exist')) {
+      return res.status(404).json({ message: 'Post not found' })
+    }
     next(err)
   }
 })
