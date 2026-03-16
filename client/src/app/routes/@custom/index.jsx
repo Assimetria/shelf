@@ -1,4 +1,5 @@
 import { Route } from 'react-router-dom'
+import { ShelfDashboardPage } from '../../pages/app/@custom/ShelfDashboardPage'
 import { ErrorTrackingPage } from '../../pages/app/@custom/ErrorTrackingPage'
 import { CollaboratorsPage } from '../../pages/app/@custom/CollaboratorsPage'
 import { BrandSettingsPage } from '../../pages/app/@custom/BrandSettingsPage'
@@ -16,6 +17,15 @@ import { PrivateRoute } from '@/app/components/@system/PrivateRoute/PrivateRoute
 // @custom — add your product-specific routes here.
 // Wrap with <PrivateRoute> for authenticated pages.
 export const customRoutes = [
+  <Route
+    key="shelf-dashboard"
+    path="/app/shelf"
+    element={
+      <PrivateRoute>
+        <ShelfDashboardPage />
+      </PrivateRoute>
+    }
+  />,
   <Route
     key="error-tracking"
     path="/app/errors"

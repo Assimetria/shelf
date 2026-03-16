@@ -20,5 +20,6 @@ router.use(require('../../api/@custom/linkedin-oauth'))
 router.use(require('../../api/@custom/hashtags'))
 router.use(require('../../api/@custom/analytics'))
 router.use(require('../../api/@custom/file-sharing'))
+router.use(require('../../api/@custom/bookmarks'))
 
 module.exports = router
