@@ -7,9 +7,10 @@ require('dotenv').config()
   const node = process.execPath
   const runJs = path.join(__dirname, 'db/migrations/@system/run.js')
   const dropScript = path.join(__dirname, '..', 'scripts', 'drop-schema-migrations.js')
+  const forceRemigrate = process.env.FORCE_MIGRATE === 'true';
   const log = (msg) => console.log(`[startup][${new Date().toISOString()}] ${msg}`)
   try {
-    log('Running DB migrations...')
+    if (forceRemigrate) { log('FORCE_MIGRATE: dropping schema_migrations...'); try { execFileSync(node, [dropScript], { stdio: 'inherit', env: process.env }); } catch(_){} } log('Running DB migrations...')
     execFileSync(node, [runJs], { stdio: 'inherit' })
     log('Migrations done.')
   } catch (e) {
