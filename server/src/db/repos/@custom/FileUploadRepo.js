@@ -4,12 +4,12 @@
 const db = require('../../../lib/@system/PostgreSQL')
 
 const FileUploadRepo = {
-  async create({ user_id, key, filename, content_type, bucket, metadata, is_public = false }) {
+  async create({ user_id, key, filename, content_type, bucket, metadata }) {
     return db.one(
-      `INSERT INTO file_uploads (user_id, key, filename, content_type, bucket, status, metadata, is_public)
-       VALUES ($1, $2, $3, $4, $5, 'pending', $6, $7)
+      `INSERT INTO file_uploads (user_id, key, filename, content_type, bucket, status, metadata)
+       VALUES ($1, $2, $3, $4, $5, 'pending', $6)
        RETURNING *`,
-      [user_id ?? null, key, filename, content_type, bucket, metadata ? JSON.stringify(metadata) : null, is_public],
+      [user_id ?? null, key, filename, content_type, bucket, metadata ? JSON.stringify(metadata) : null],
     )
   },
 
@@ -102,37 +102,6 @@ const FileUploadRepo = {
 
   async hardDelete(id) {
     return db.oneOrNone('DELETE FROM file_uploads WHERE id = $1 RETURNING *', [id])
-  },
-
-  // ── Access control ────────────────────────────────────────────────────────────
-
-  async setPublic(id, is_public) {
-    return db.oneOrNone(
-      `UPDATE file_uploads SET is_public = $2
-       WHERE id = $1 AND deleted_at IS NULL
-       RETURNING *`,
-      [id, is_public],
-    )
-  },
-
-  async setAccessUrl(id, access_url) {
-    return db.oneOrNone(
-      `UPDATE file_uploads SET access_url = $2
-       WHERE id = $1 AND deleted_at IS NULL
-       RETURNING *`,
-      [id, access_url],
-    )
-  },
-
-  async findPublicFiles({ limit = 50, offset = 0 } = {}) {
-    return db.any(
-      `SELECT id, user_id, key, filename, content_type, size_bytes, bucket, status, is_public, access_url, created_at
-       FROM file_uploads
-       WHERE is_public = true AND deleted_at IS NULL AND status = 'uploaded'
-       ORDER BY created_at DESC
-       LIMIT $1 OFFSET $2`,
-      [limit, offset],
-    )
   },
 
   /** @deprecated Alias for softDelete — use softDelete() explicitly */

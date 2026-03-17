@@ -1,39 +1,36 @@
 require('dotenv').config()
 
-// ── Run DB migrations before anything else (non-fatal — server starts regardless) ──
+// ── Run DB migrations before anything else (Railway startCommand fix) ────────
 ;(function runMigrationsSync() {
   const { execFileSync, spawnSync } = require('child_process')
   const path = require('path')
   const node = process.execPath
   const runJs = path.join(__dirname, 'db/migrations/@system/run.js')
   const dropScript = path.join(__dirname, '..', 'scripts', 'drop-schema-migrations.js')
-  const forceRemigrate = process.env.FORCE_MIGRATE === 'true';
   const log = (msg) => console.log(`[startup][${new Date().toISOString()}] ${msg}`)
   try {
-    if (forceRemigrate) { log('FORCE_MIGRATE: dropping schema_migrations...'); try { execFileSync(node, [dropScript], { stdio: 'inherit', env: process.env }); } catch(_){} } log('Running DB migrations...')
+    log('Running DB migrations...')
     execFileSync(node, [runJs], { stdio: 'inherit' })
     log('Migrations done.')
   } catch (e) {
-    log(`Migrations failed (${e.message}) — retrying once...`)
+    log(`Migrations failed (${e.message}) — clearing schema_migrations and retrying`)
     try {
+      // Drop schema_migrations using a dedicated script (avoids inline -e code anti-pattern)
       spawnSync(node, [dropScript], { stdio: 'inherit', env: process.env })
-      execFileSync(node, [runJs], { stdio: 'inherit' })
-      log('Migrations done after recovery.')
-    } catch (e2) {
-      log(`WARNING: Migrations failed after retry (${e2.message}). Server will start anyway — DB may need manual migration.`)
-    }
+    } catch (_) {}
+    execFileSync(node, [runJs], { stdio: 'inherit' })
+    log('Migrations done after recovery.')
   }
 })()
 
 require('./lib/@system/Env') // validate env vars — exits with a clear error if required vars are missing
-const http = require('http')
 const app = require('./app')
 const logger = require('./lib/@system/Logger')
 const { connect: connectRedis } = require('./lib/@system/Redis')
 const { connectPool: connectPostgres, disconnectPool: disconnectPostgres } = require('./lib/@system/PostgreSQL')
 const { scheduler } = require('./scheduler/tasks/@system')
 
-const PORT = process.env.PORT ?? 3001
+const PORT = process.env.PORT ?? 4000
 // In production (Railway), bind to 0.0.0.0 so Railway can route traffic.
 // In development, bind to localhost only to prevent external access.
 const BIND_HOST = process.env.BIND_HOST ||
@@ -55,35 +52,22 @@ async function start() {
   }
 
   // ── Scheduler ──────────────────────────────────────────────────────────
-  // Initialize custom tasks (application layer imports @custom, not @system)
   try {
     const initCustomTasks = require('./scheduler/tasks/@custom/init')
     initCustomTasks(scheduler)
-    logger.info('custom tasks initialised')
+    logger.info('scheduler: custom tasks initialised')
   } catch (err) {
-    logger.warn({ err }, 'no custom task init found or init failed — skipping')
+    logger.warn({ err }, 'scheduler: no custom init found or init failed — skipping')
   }
 
-  // ── Create HTTP server (required for GraphQL WebSocket subscriptions) ──
-  const httpServer = http.createServer(app)
-
-  // ── GraphQL setup ──────────────────────────────────────────────────────
-  try {
-    const { setupGraphQL } = require('./graphql/@custom')
-    await setupGraphQL(app, httpServer)
-    logger.info('GraphQL API initialized')
-  } catch (err) {
-    logger.warn({ err: err.message }, 'GraphQL setup failed — continuing without GraphQL')
-  }
-
-  httpServer.listen(PORT, BIND_HOST, () => {
+  const server = app.listen(PORT, BIND_HOST, () => {
     logger.info({ port: PORT, host: BIND_HOST, env: process.env.NODE_ENV ?? 'development' }, 'server started')
   })
 
   // ── Graceful shutdown ──────────────────────────────────────────────────
   async function shutdown(signal) {
     logger.info({ signal }, 'shutdown signal received')
-    httpServer.close(async () => {
+    server.close(async () => {
       await disconnectPostgres()
       logger.info('shutdown complete')
       process.exit(0)

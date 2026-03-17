@@ -16,7 +16,8 @@ import {
   BookOpen,
   RefreshCw,
   X,
-  Save } from 'lucide-react'
+  Save,
+} from 'lucide-react'
 import { Header } from '../../../components/@system/Header/Header'
 import { Sidebar, SidebarSection, SidebarItem } from '../../../components/@system/Sidebar/Sidebar'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../../components/@system/Card/Card'
@@ -27,16 +28,33 @@ import { cn } from '../../../lib/@system/utils'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
+interface BlogPost {
+  id: number
+  slug: string
+  title: string
+  excerpt: string | null
+  content: string
+  category: string
+  author: string
+  tags: string[] | null
+  cover_image: string | null
+  reading_time: number
+  status: 'draft' | 'published'
+  published_at: string | null
+  created_at: string
+  updated_at: string
+}
 
 const CATEGORIES = ['Company', 'Product', 'Engineering', 'Design', 'Tutorials']
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function formatDate(iso) {
+function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('en-GB', {
     day: '2-digit',
     month: 'short',
-    year: 'numeric' })
+    year: 'numeric',
+  })
 }
 
 // ── Nav items ─────────────────────────────────────────────────────────────────
@@ -53,8 +71,13 @@ const NAV_ITEMS = [
 
 // ── Post Form Modal ───────────────────────────────────────────────────────────
 
+interface PostFormProps {
+  post: BlogPost | null
+  onClose: () => void
+  onSaved: () => void
+}
 
-function PostFormModal({ post, onClose, onSaved }) {
+function PostFormModal({ post, onClose, onSaved }: PostFormProps) {
   const isEdit = !!post
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -65,15 +88,15 @@ function PostFormModal({ post, onClose, onSaved }) {
   const [category, setCategory] = useState(post?.category ?? 'Company')
   const [author, setAuthor] = useState(post?.author ?? '')
   const [tagsRaw, setTagsRaw] = useState((post?.tags ?? []).join(', '))
-  const [status, setStatus] = useState(post?.status ?? 'draft')
+  const [status, setStatus] = useState<'draft' | 'published'>(post?.status ?? 'draft')
 
-  const overlayRef = useRef(null)
+  const overlayRef = useRef<HTMLDivElement>(null)
 
-  function handleOverlayClick(e) {
+  function handleOverlayClick(e: React.MouseEvent) {
     if (e.target === overlayRef.current) onClose()
   }
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!title.trim()) { setError('Title is required'); return }
 
@@ -91,12 +114,13 @@ function PostFormModal({ post, onClose, onSaved }) {
       content: content.trim(),
       category,
       author: author.trim() || 'The Team',
-      tags: tags.length ? tags : [],
-      status }
+      tags: tags.length ? tags : null,
+      status,
+    }
 
     try {
       if (isEdit) {
-        await api.patch(`/blog/${post.id}`, body)
+        await api.patch(`/blog/${post!.id}`, body)
       } else {
         await api.post('/blog', body)
       }
@@ -211,7 +235,7 @@ function PostFormModal({ post, onClose, onSaved }) {
             <div>
               <label className="block text-sm font-medium mb-2">Status</label>
               <div className="flex gap-3">
-                {(['draft', 'published']).map((s) => (
+                {(['draft', 'published'] as const).map((s) => (
                   <button
                     key={s}
                     type="button"
@@ -257,8 +281,13 @@ function PostFormModal({ post, onClose, onSaved }) {
 
 // ── Delete confirm dialog ─────────────────────────────────────────────────────
 
+interface DeleteDialogProps {
+  post: BlogPost
+  onClose: () => void
+  onDeleted: () => void
+}
 
-function DeleteDialog({ post, onClose, onDeleted }) {
+function DeleteDialog({ post, onClose, onDeleted }: DeleteDialogProps) {
   const [deleting, setDeleting] = useState(false)
   const [error, setError] = useState('')
 
@@ -298,20 +327,20 @@ function DeleteDialog({ post, onClose, onDeleted }) {
 
 export function BlogAdminPage() {
   const location = useLocation()
-  const [posts, setPosts] = useState([])
+  const [posts, setPosts] = useState<BlogPost[]>([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const [formPost, setFormPost] = useState(null)
-  const [deletePost, setDeletePost] = useState(null)
-  const [actionLoading, setActionLoading] = useState(null)
+  const [formPost, setFormPost] = useState<BlogPost | null | 'new'>(null)
+  const [deletePost, setDeletePost] = useState<BlogPost | null>(null)
+  const [actionLoading, setActionLoading] = useState<number | null>(null)
 
   async function fetchPosts() {
     setLoading(true)
     setError('')
     try {
-      const data = await api.get('/blog/admin')
+      const data = await api.get<{ posts: BlogPost[]; total: number }>('/blog/admin')
       setPosts(data.posts)
       setTotal(data.total)
     } catch (err) {
@@ -323,7 +352,7 @@ export function BlogAdminPage() {
 
   useEffect(() => { fetchPosts() }, [])
 
-  async function togglePublish(post) {
+  async function togglePublish(post: BlogPost) {
     setActionLoading(post.id)
     try {
       const endpoint = post.status === 'published' ? `/blog/${post.id}/unpublish` : `/blog/${post.id}/publish`
@@ -362,7 +391,7 @@ export function BlogAdminPage() {
             </p>
           </div>
           <SidebarSection>
-            {NAV_ITEMS.map(({ icon, label, to }) => (
+            {NAV_ITEMS.map(({ icon: Icon, label, to }) => (
               <Link to={to} key={to}>
                 <SidebarItem
                   icon={<Icon className="h-4 w-4" />}

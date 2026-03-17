@@ -1,9 +1,8 @@
 // @custom — Storage API (presigned S3 uploads)
 //
-// GET    /api/storage                — list current user's uploaded files
-// POST   /api/storage/presign        — request a presigned PUT URL for S3 upload
-// PATCH  /api/storage/:fileId/confirm — confirm a file was successfully uploaded
-// GET    /api/storage/:fileId        — get file record by ID
+// POST  /api/storage/presign         — request a presigned PUT URL for S3 upload
+// PATCH /api/storage/:fileId/confirm — confirm a file was successfully uploaded
+// GET   /api/storage/:fileId         — get file record by ID
 // DELETE /api/storage/:fileId        — delete file record (and S3 object)
 
 'use strict'
@@ -15,8 +14,7 @@ const S3 = require('../../../lib/@system/AWS/S3')
 const FileUploadRepo = require('../../../db/repos/@custom/FileUploadRepo')
 const logger = require('../../../lib/@system/Logger')
 const { validate } = require('../../../lib/@system/Validation')
-const { PresignBody, FileIdParams, ConfirmUploadBody } = require('../../../lib/@custom/Validation/schemas/storage')
-const { uploadLimiter } = require('../../../lib/@system/RateLimit')
+const { PresignBody, FileIdParams, ConfirmUploadBody } = require('../../../lib/@custom/Validation/schemas/@custom/storage')
 
 // ── Allowed MIME types (restrict to safe set) ─────────────────────────────────
 
@@ -40,22 +38,6 @@ const ALLOWED_MIME_TYPES = new Set([
 
 const MAX_SIZE_BYTES = 100 * 1024 * 1024 // 100 MB
 
-// ── GET /api/storage — list current user's files ─────────────────────────────
-
-router.get('/storage', authenticate, async (req, res, next) => {
-  try {
-    const { status, limit = '50', offset = '0' } = req.query
-    const files = await FileUploadRepo.findByUserId(req.user.id, {
-      status: status || undefined,
-      limit: parseInt(limit, 10),
-      offset: parseInt(offset, 10),
-    })
-    return res.json({ files })
-  } catch (err) {
-    next(err)
-  }
-})
-
 // ── POST /api/storage/presign ─────────────────────────────────────────────────
 
 /**
@@ -70,7 +52,7 @@ router.get('/storage', authenticate, async (req, res, next) => {
  * Response:
  *   { file_id, upload_url, key, bucket, expires_at, public_url }
  */
-router.post('/storage/presign', authenticate, uploadLimiter, validate({ body: PresignBody }), async (req, res, next) => {
+router.post('/storage/presign', authenticate, validate({ body: PresignBody }), async (req, res, next) => {
   try {
     const { filename, content_type, size, folder } = req.body
 
@@ -89,7 +71,6 @@ router.post('/storage/presign', authenticate, uploadLimiter, validate({ body: Pr
       filename: cleanFilename,
       content_type: mimeType,
       bucket,
-      is_public: req.body.is_public || false,
     })
 
     const publicUrl = S3.getPublicUrl(key, bucket)
@@ -119,7 +100,7 @@ router.post('/storage/presign', authenticate, uploadLimiter, validate({ body: Pr
  *   size_bytes {number} — actual file size after upload
  *   verify     {boolean} — check S3 existence before confirming (default: false)
  */
-router.patch('/storage/:fileId/confirm', authenticate, uploadLimiter, validate({ params: FileIdParams, body: ConfirmUploadBody }), async (req, res, next) => {
+router.patch('/storage/:fileId/confirm', authenticate, validate({ params: FileIdParams, body: ConfirmUploadBody }), async (req, res, next) => {
   try {
     const fileId = req.params.fileId
 

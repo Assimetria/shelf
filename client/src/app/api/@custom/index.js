@@ -1,5 +1,5 @@
 // @custom API calls — product-specific API functions
-import { api } from '../../lib/@system/api.js'
+import { api } from '../../lib/@system/api'
 
 // ─── Brand types ─────────────────────────────────────────────────────────────
 

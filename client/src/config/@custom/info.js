@@ -1,11 +1,10 @@
 // @custom — product-specific config override
-// Override any values from @system/info.js here.
+// Override any values from @system/info.ts here.
 // This file is NEVER overwritten during template sync.
 
 export const customInfo = {
-  // Uncomment and set your product values:
-  // name: 'MyProduct',
-  // tagline: 'My product tagline',
-  // url: 'https://myproduct.com',
-  // supportEmail: 'support@myproduct.com',
+  name: 'Splice',
+  tagline: 'Your product tagline here',
+  url: import.meta.env.VITE_APP_URL ?? 'http://localhost:5173',
+  supportEmail: 'support@splice.com',
 }

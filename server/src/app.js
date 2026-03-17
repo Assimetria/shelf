@@ -1,13 +1,15 @@
+const path = require('path')
+const fs = require('fs')
 const express = require('express')
 const compression = require('compression')
 const cookieParser = require('cookie-parser')
 const pinoHttp = require('pino-http')
 
 const logger = require('./lib/@system/Logger')
-const { cors, csrf, securityHeaders, attachDatabase } = require('./lib/@system/Middleware')
+const { cors, securityHeaders, csrfProtection, generateCsrfToken } = require('./lib/@system/Middleware')
 const { apiLimiter } = require('./lib/@system/RateLimit')
 const systemRoutes = require('./routes/@system')
-const customRoutes = require('./routes/@custom')
+let customRoutes; try { customRoutes = require('./routes/@custom') } catch(e) { console.warn('[app] @custom routes failed:', e.message); const express = require('express'); customRoutes = express.Router() }
 
 const app = express()
 
@@ -25,15 +27,22 @@ app.get('/healthz', (_req, res) => res.status(200).json({ status: 'ok' }))
 
 app.use(securityHeaders)
 app.use(cors)
-app.use(csrf)
 app.use(compression())
 app.use(express.json({ limit: '10mb' }))
 app.use(cookieParser())
-app.use(attachDatabase)
 
 if (process.env.NODE_ENV !== 'test') {
   app.use(pinoHttp({ logger }))
 }
+
+// CSRF token endpoint — clients must call this before making state-changing requests
+app.get('/api/csrf-token', (req, res) => {
+  const csrfToken = generateCsrfToken(req, res)
+  res.json({ csrfToken })
+})
+
+// CSRF protection for all state-changing requests (POST, PUT, PATCH, DELETE)
+app.use(csrfProtection)
 
 // General rate limiting for all API routes (baseline DoS protection)
 app.use('/api', apiLimiter)
@@ -42,10 +51,19 @@ app.use('/api', apiLimiter)
 app.use('/api', systemRoutes)
 app.use('/api', customRoutes)
 
-// API 404 catch-all
-app.use((req, res) => {
-  res.status(404).json({ message: 'Not found' })
-})
+// Serve React SPA in production
+const publicDir = path.join(__dirname, '..', 'public')
+if (process.env.NODE_ENV === 'production' && fs.existsSync(publicDir)) {
+  app.use(express.static(publicDir))
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(publicDir, 'index.html'))
+  })
+} else {
+  // 404 (dev/test — client runs separately)
+  app.use((req, res) => {
+    res.status(404).json({ message: 'Not found' })
+  })
+}
 
 // Error handler
 app.use((err, req, res, _next) => {

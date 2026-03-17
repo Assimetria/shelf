@@ -1,4 +1,4 @@
-import { test as base } from '@playwright/test'
+import { test as base, Page } from '@playwright/test'
 
 /**
  * Test fixtures shared across all E2E tests.
@@ -9,15 +9,24 @@ import { test as base } from '@playwright/test'
  */
 
 // Extend Playwright's base fixtures with helpers used across tests
-export const test = base.extend({
+export const test = base.extend<{
   /** Navigate to /auth and expose login helpers */
+  authPage: {
+    goto: () => Promise<void>
+    fillEmail: (email: string) => Promise<void>
+    fillPassword: (password: string) => Promise<void>
+    submit: () => Promise<void>
+    login: (email: string, password: string) => Promise<void>
+    getError: () => Promise<string | null>
+  }
+}>({
   authPage: async ({ page }, use) => {
     const helpers = {
       goto: () => page.goto('/auth'),
-      fillEmail: (email) => page.fill('input[name="email"], input[type="email"]', email),
-      fillPassword: (password) => page.fill('input[name="password"], input[type="password"]', password),
+      fillEmail: (email: string) => page.fill('input[name="email"], input[type="email"]', email),
+      fillPassword: (password: string) => page.fill('input[name="password"], input[type="password"]', password),
       submit: () => page.click('button[type="submit"]'),
-      login: async (email, password) => {
+      login: async (email: string, password: string) => {
         await page.goto('/auth')
         await page.fill('input[name="email"], input[type="email"]', email)
         await page.fill('input[name="password"], input[type="password"]', password)
@@ -36,7 +45,7 @@ export const test = base.extend({
 export { expect } from '@playwright/test'
 
 /** Helper: wait for navigation to a path */
-export async function waitForPath(page, path, timeout = 10_000) {
+export async function waitForPath(page: Page, path: string, timeout = 10_000) {
   await page.waitForURL(`**${path}`, { timeout })
 }
 

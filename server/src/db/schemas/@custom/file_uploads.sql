@@ -9,16 +9,11 @@ CREATE TABLE IF NOT EXISTS file_uploads (
   size_bytes    BIGINT,                        -- file size in bytes (set on confirm)
   bucket        TEXT NOT NULL,
   status        TEXT NOT NULL DEFAULT 'pending', -- 'pending' | 'uploaded' | 'failed'
-  is_public     BOOLEAN NOT NULL DEFAULT false,  -- public/private toggle
-  access_url    TEXT,                            -- separate shareable access URL
   metadata      JSONB,
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
-  confirmed_at  TIMESTAMPTZ,
-  deleted_at    TIMESTAMPTZ                      -- soft delete
+  confirmed_at  TIMESTAMPTZ
 );
 
 CREATE INDEX IF NOT EXISTS idx_file_uploads_user_id   ON file_uploads(user_id);
 CREATE INDEX IF NOT EXISTS idx_file_uploads_status    ON file_uploads(status);
 CREATE INDEX IF NOT EXISTS idx_file_uploads_key       ON file_uploads(key);
-CREATE INDEX IF NOT EXISTS idx_file_uploads_is_public ON file_uploads(id) WHERE is_public = true;
-CREATE INDEX IF NOT EXISTS idx_file_uploads_not_deleted ON file_uploads(id) WHERE deleted_at IS NULL;

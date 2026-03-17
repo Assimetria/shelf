@@ -41,7 +41,7 @@ for (const { path, name } of PUBLIC_ROUTES) {
 }
 
 test('landing page: no console errors on load', async ({ page }) => {
-  const errors = []
+  const errors: string[] = []
   page.on('console', (msg) => {
     if (msg.type() === 'error') errors.push(msg.text())
   })

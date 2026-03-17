@@ -35,35 +35,4 @@ const ConfirmUploadBody = z.object({
   verify: z.boolean().optional().default(false),
 })
 
-const ShareFileBody = z.object({
-  email: z.string().email('Valid email required').toLowerCase().trim(),
-  permission: z.enum(['view', 'download', 'edit']).optional().default('view'),
-  expires_in_hours: z.number().int().positive().max(8760).optional(), // max 1 year
-})
-
-const UpdateShareBody = z.object({
-  permission: z.enum(['view', 'download', 'edit']),
-})
-
-const ShareIdParams = z.object({
-  shareId: z.coerce.number({ invalid_type_error: 'shareId must be a number' }).int().positive(),
-})
-
-const ShareTokenParams = z.object({
-  token: z.string().min(1, 'token is required'),
-})
-
-const UpdateVisibilityBody = z.object({
-  is_public: z.boolean(),
-})
-
-module.exports = {
-  PresignBody,
-  FileIdParams,
-  ConfirmUploadBody,
-  ShareFileBody,
-  UpdateShareBody,
-  ShareIdParams,
-  ShareTokenParams,
-  UpdateVisibilityBody,
-}
+module.exports = { PresignBody, FileIdParams, ConfirmUploadBody }
