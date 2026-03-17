@@ -59,4 +59,5 @@ function requireAdmin(req, res, next) {
   next()
 }
 
-module.exports = { authenticate, requireAdmin, extractAccessToken }
+const requireAuth = authenticate
+module.exports = { authenticate, requireAuth, requireAdmin, extractAccessToken }
