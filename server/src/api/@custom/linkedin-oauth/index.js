@@ -1,4 +1,15 @@
 /**
+ * SECURITY REVIEW — 2026-03-21
+ * Reviewed by: Claude (automated review)
+ * - Authentication delegates entirely to @system `authenticate` middleware (no custom auth logic).
+ * - CSRF protection: cryptographically random 32-byte state token, 10-minute TTL, single-use.
+ * - Rate limiting: all OAuth endpoints guarded by @system `oauthLimiter`.
+ * - NOTE: This router is NOT registered in server/src/routes/@custom/index.js and is
+ *   therefore dead code — it will not handle any requests until explicitly added to the
+ *   route registry.
+ */
+
+/**
  * @custom — LinkedIn OAuth routes
  *
  * Connects a user's LinkedIn account for publishing and analytics.
