@@ -68,7 +68,6 @@ const SESSION_FAMILY_MAX_MS = 30 * 24 * 60 * 60 * 1000
 
 async function authenticate(req, res, next) {
   try {
-    const authHeader = req.headers['authorization']
     const apiKeyRaw  = req.headers['x-api-key']
 
     // ── 1. API key auth ───────────────────────────────────────────────────────
@@ -125,10 +124,13 @@ async function authenticate(req, res, next) {
     // reject any session whose family has exceeded SESSION_FAMILY_MAX_MS regardless
     // of the per-row expires_at value, preventing stale tokens from surviving
     // DB manipulation of the expires_at field.
+    //
+    // extractAccessToken checks Authorization: Bearer <token> first, then falls
+    // back to the access_token HttpOnly cookie set by the login route.
 
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      const token = authHeader.slice(7)
+    const token = extractAccessToken(req)
 
+    if (token !== null) {
       // Session tokens are 96-hex chars; JWTs contain dots.  Try the sessions
       // table first; fall through to JWT verification if nothing is found.
       if (/^[0-9a-f]{96}$/.test(token)) {
