@@ -1,0 +1,1645 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shelf — Dashboard</title>
+  <link rel="icon" type="image/svg+xml" href="../../assets/favicons/favicon.svg" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── THEME TOKENS ── */
+    [data-theme="dark"] {
+      --bg: #0a0a12;
+      --surface: #111120;
+      --surface-2: #1a1a2e;
+      --surface-3: #212136;
+      --border: rgba(255,255,255,0.08);
+      --border-strong: rgba(255,255,255,0.14);
+      --text: #f9fafb;
+      --text-muted: #9ca3af;
+      --text-dim: #4b5563;
+      --shadow: rgba(0,0,0,0.6);
+    }
+    [data-theme="light"] {
+      --bg: #f8f9fc;
+      --surface: #ffffff;
+      --surface-2: #f1f3f7;
+      --surface-3: #e9ecf3;
+      --border: rgba(0,0,0,0.08);
+      --border-strong: rgba(0,0,0,0.14);
+      --text: #111827;
+      --text-muted: #6b7280;
+      --text-dim: #9ca3af;
+      --shadow: rgba(0,0,0,0.08);
+    }
+
+    :root {
+      --brand: #F97316;
+      --brand-light: #FB923C;
+      --brand-dark: #EA6A0A;
+      --brand-bg: rgba(249,115,22,0.1);
+      --brand-border: rgba(249,115,22,0.25);
+      --accent: #6366F1;
+      --accent-light: #818CF8;
+      --accent-bg: rgba(99,102,241,0.1);
+      --sidebar-w: 240px;
+    }
+
+    html, body { height: 100%; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      min-height: 100vh;
+      transition: background 0.25s, color 0.25s;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 50;
+      transition: background 0.25s;
+    }
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      padding: 1.25rem 1rem 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-logo-mark {
+      width: 28px; height: 28px;
+      border-radius: 7px;
+      background: linear-gradient(135deg, var(--brand) 0%, var(--brand-light) 100%);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .sidebar-logo-text {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+    .sidebar-nav {
+      flex: 1;
+      padding: 0.75rem 0.625rem;
+      overflow-y: auto;
+    }
+    .nav-section-label {
+      font-size: 0.6875rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      padding: 0.5rem 0.5rem 0.375rem;
+      margin-top: 0.5rem;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      padding: 0.5rem 0.625rem;
+      border-radius: 7px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      text-decoration: none;
+      margin-bottom: 1px;
+    }
+    .nav-item:hover { background: var(--surface-2); color: var(--text); }
+    .nav-item.active {
+      background: var(--brand-bg);
+      color: var(--brand-light);
+      border: 1px solid var(--brand-border);
+    }
+    .nav-item svg { flex-shrink: 0; opacity: 0.8; }
+    .nav-item.active svg { opacity: 1; }
+    .nav-badge {
+      margin-left: auto;
+      min-width: 18px;
+      height: 18px;
+      background: var(--brand);
+      color: #fff;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      border-radius: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 5px;
+    }
+
+    .sidebar-footer {
+      padding: 0.875rem;
+      border-top: 1px solid var(--border);
+    }
+    .user-row {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      padding: 0.5rem 0.375rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .user-row:hover { background: var(--surface-2); }
+    .user-avatar {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--brand) 0%, var(--accent) 100%);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .user-info { flex: 1; min-width: 0; }
+    .user-name { font-size: 0.8125rem; font-weight: 600; }
+    .user-email { font-size: 0.75rem; color: var(--text-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* ── MAIN LAYOUT ── */
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0 1.5rem;
+      height: 56px;
+      transition: background 0.25s;
+    }
+    .topbar-search {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.875rem;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      max-width: 500px;
+    }
+    .topbar-search input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 0.875rem;
+      color: var(--text);
+      font-family: inherit;
+    }
+    .topbar-search input::placeholder { color: var(--text-dim); }
+    .topbar-search svg { color: var(--text-dim); flex-shrink: 0; }
+    .topbar-kbd {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+    .kbd {
+      padding: 1px 5px;
+      background: var(--surface-3);
+      border: 1px solid var(--border-strong);
+      border-radius: 4px;
+      font-size: 0.6875rem;
+      color: var(--text-dim);
+      font-family: inherit;
+    }
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-left: auto;
+    }
+    .icon-btn {
+      width: 34px; height: 34px;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      transition: all 0.15s;
+    }
+    .icon-btn:hover { background: var(--surface-2); color: var(--text); }
+    .btn-add {
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.4375rem 0.875rem;
+      background: var(--brand);
+      border: none;
+      border-radius: 7px;
+      color: #fff;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .btn-add:hover { background: var(--brand-light); }
+
+    /* ── PAGE CONTENT ── */
+    .page {
+      flex: 1;
+      padding: 1.75rem 2rem;
+    }
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .page-title { font-size: 1.375rem; font-weight: 800; letter-spacing: -0.02em; }
+    .page-sub { font-size: 0.875rem; color: var(--text-muted); margin-top: 0.25rem; }
+    .page-actions { display: flex; align-items: center; gap: 0.625rem; flex-shrink: 0; }
+
+    /* ── TABS ── */
+    .tabs-row {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+      overflow-x: auto;
+    }
+    .tab {
+      padding: 0.625rem 1rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      font-family: inherit;
+      transition: color 0.15s;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--brand); border-bottom-color: var(--brand); }
+    .tab-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      background: var(--surface-2);
+      border-radius: 100px;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      margin-left: 0.375rem;
+      color: var(--text-dim);
+    }
+    .tab.active .tab-count { background: var(--brand-bg); color: var(--brand); }
+
+    /* TAB PANELS */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── FILTER BAR ── */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+    .filter-chip {
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.375rem 0.75rem;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .filter-chip:hover { border-color: var(--border-strong); color: var(--text); }
+    .filter-chip.active {
+      background: var(--brand-bg);
+      border-color: var(--brand-border);
+      color: var(--brand-light);
+    }
+    .filter-sep { flex: 1; }
+    .view-toggle {
+      display: flex;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      overflow: hidden;
+    }
+    .view-btn {
+      padding: 0.375rem 0.625rem;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--text-dim);
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+    }
+    .view-btn.active { background: var(--surface-2); color: var(--text); }
+
+    /* ── LIBRARY CARDS GRID ── */
+    .items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    .item-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.125rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .item-card:hover {
+      border-color: var(--border-strong);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px var(--shadow);
+    }
+    .item-card-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 0.875rem;
+    }
+    .item-favicon {
+      width: 32px; height: 32px;
+      border-radius: 7px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .item-source {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      margin-bottom: 0.125rem;
+    }
+    .item-title {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+    .item-excerpt {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 0.875rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .item-footer {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.1875rem 0.5rem;
+      border-radius: 100px;
+      font-size: 0.6875rem;
+      font-weight: 600;
+    }
+    .tag-orange { background: var(--brand-bg); color: var(--brand-light); }
+    .tag-indigo { background: var(--accent-bg); color: var(--accent-light); }
+    .tag-green { background: rgba(16,185,129,0.1); color: #34D399; }
+    .tag-purple { background: rgba(139,92,246,0.1); color: #A78BFA; }
+    .tag-pink { background: rgba(236,72,153,0.1); color: #F472B6; }
+    .item-read-time {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      margin-left: auto;
+    }
+    .item-actions {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      display: flex;
+      gap: 0.25rem;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .item-card:hover .item-actions { opacity: 1; }
+    .item-action-btn {
+      width: 26px; height: 26px;
+      border-radius: 5px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-dim);
+      transition: all 0.15s;
+    }
+    .item-action-btn:hover { color: var(--text); }
+    .item-saved-badge {
+      position: absolute;
+      top: 0.75rem;
+      left: 0.75rem;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--brand);
+    }
+
+    /* ── LIST VIEW ── */
+    .items-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .item-row {
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
+      padding: 0.875rem 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .item-row:hover { border-color: var(--border-strong); }
+    .item-row-favicon {
+      width: 28px; height: 28px;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+    .item-row-info { flex: 1; min-width: 0; }
+    .item-row-title { font-size: 0.875rem; font-weight: 600; }
+    .item-row-meta { font-size: 0.75rem; color: var(--text-dim); margin-top: 0.125rem; }
+    .item-row-tags { display: flex; gap: 0.375rem; flex-shrink: 0; }
+    .item-row-time { font-size: 0.75rem; color: var(--text-dim); flex-shrink: 0; white-space: nowrap; }
+
+    /* ── COLLECTIONS PANEL ── */
+    .collections-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+    .collection-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.375rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .collection-card:hover {
+      border-color: var(--border-strong);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px var(--shadow);
+    }
+    .collection-card.add-new {
+      border-style: dashed;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 140px;
+      color: var(--text-dim);
+      gap: 0.5rem;
+    }
+    .collection-card.add-new:hover { border-color: var(--brand-border); color: var(--brand); }
+    .collection-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+    .collection-name { font-size: 1rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .collection-count { font-size: 0.8125rem; color: var(--text-muted); }
+    .collection-bar {
+      height: 3px;
+      border-radius: 100px;
+      margin-top: 1rem;
+      background: var(--surface-2);
+      overflow: hidden;
+    }
+    .collection-bar-fill {
+      height: 100%;
+      border-radius: 100px;
+    }
+
+    /* ── HIGHLIGHTS ── */
+    .highlights-list { display: flex; flex-direction: column; gap: 0.875rem; }
+    .highlight-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--brand);
+      border-radius: 0 12px 12px 0;
+      padding: 1.125rem 1.25rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .highlight-card:hover { border-color: var(--border-strong); border-left-color: var(--brand); }
+    .highlight-text {
+      font-size: 0.9375rem;
+      line-height: 1.65;
+      margin-bottom: 0.75rem;
+      color: var(--text);
+    }
+    .highlight-source {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8125rem;
+      color: var(--text-dim);
+    }
+    .highlight-source-dot {
+      width: 16px; height: 16px;
+      border-radius: 4px;
+    }
+    .highlight-note {
+      margin-top: 0.75rem;
+      padding: 0.625rem 0.875rem;
+      background: var(--surface-2);
+      border-radius: 7px;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* ── DISCOVER ── */
+    .discover-hero {
+      background: linear-gradient(135deg, rgba(249,115,22,0.06) 0%, rgba(99,102,241,0.04) 100%);
+      border: 1px solid var(--brand-border);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+    .discover-hero h3 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .discover-hero p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      max-width: 420px;
+      line-height: 1.6;
+    }
+    .discover-stats {
+      display: flex;
+      gap: 1.5rem;
+      flex-shrink: 0;
+    }
+    .discover-stat { text-align: center; }
+    .discover-stat-num {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--brand) 0%, var(--brand-light) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .discover-stat-label { font-size: 0.75rem; color: var(--text-dim); }
+    .discover-section-title {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 0.875rem;
+    }
+    .trending-list { display: flex; flex-direction: column; gap: 0.625rem; margin-bottom: 2rem; }
+    .trending-item {
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
+      padding: 0.75rem 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .trending-item:hover { border-color: var(--border-strong); }
+    .trending-rank {
+      width: 24px;
+      text-align: center;
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--text-dim);
+      flex-shrink: 0;
+    }
+    .trending-info { flex: 1; }
+    .trending-title { font-size: 0.875rem; font-weight: 600; margin-bottom: 0.125rem; }
+    .trending-meta { font-size: 0.75rem; color: var(--text-dim); }
+    .trending-saves {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.75rem;
+      color: var(--brand-light);
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    /* ── STATS CARDS ── */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 0.875rem;
+      margin-bottom: 1.5rem;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.125rem 1.25rem;
+    }
+    .stat-card-label {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    .stat-card-value {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 0.375rem;
+    }
+    .stat-card-change {
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    .stat-card-change.up { color: #34D399; }
+    .stat-card-change.down { color: #F87171; }
+
+    /* ── ACTIVITY FEED ── */
+    .activity-list { display: flex; flex-direction: column; gap: 0.25rem; }
+    .activity-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.75rem 0.875rem;
+      border-radius: 8px;
+      transition: background 0.15s;
+    }
+    .activity-item:hover { background: var(--surface-2); }
+    .activity-icon {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 0.1rem;
+    }
+    .activity-text { flex: 1; font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; }
+    .activity-text strong { color: var(--text); font-weight: 600; }
+    .activity-time { font-size: 0.75rem; color: var(--text-dim); flex-shrink: 0; white-space: nowrap; }
+
+    /* ── EMPTY STATES ── */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 2rem;
+      text-align: center;
+      color: var(--text-muted);
+    }
+    .empty-state svg { margin-bottom: 1rem; opacity: 0.4; }
+    .empty-state h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .empty-state p { font-size: 0.875rem; line-height: 1.6; max-width: 300px; }
+
+    /* ── MODAL OVERLAY ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 16px;
+      padding: 1.75rem;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 24px 80px var(--shadow);
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+    .modal-title { font-size: 1.0625rem; font-weight: 700; }
+    .modal-close {
+      width: 28px; height: 28px;
+      border-radius: 6px;
+      background: var(--surface-2);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+    }
+    .modal-input {
+      width: 100%;
+      padding: 0.6875rem 0.875rem;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.9375rem;
+      font-family: inherit;
+      outline: none;
+      margin-bottom: 1rem;
+    }
+    .modal-input:focus { border-color: rgba(249,115,22,0.4); }
+    .modal-btn {
+      width: 100%;
+      padding: 0.6875rem;
+      background: var(--brand);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .modal-btn:hover { background: var(--brand-light); }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 100px; }
+
+    /* ── NOTIFICATION TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 300;
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      padding: 0.875rem 1.125rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      box-shadow: 0 8px 32px var(--shadow);
+      font-size: 0.875rem;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--brand); flex-shrink: 0; }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo-mark">
+        <svg width="14" height="14" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="120" y="108" width="224" height="40" rx="16" fill="white" fill-opacity="0.9"/>
+          <rect x="120" y="228" width="288" height="40" rx="16" fill="white" fill-opacity="0.7"/>
+          <rect x="120" y="348" width="272" height="40" rx="16" fill="white" fill-opacity="0.5"/>
+        </svg>
+      </div>
+      <span class="sidebar-logo-text">Shelf</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Library</div>
+      <a class="nav-item active" onclick="activateNav(this); switchMainTab('library')" href="#">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        Library
+        <span class="nav-badge">247</span>
+      </a>
+      <a class="nav-item" onclick="activateNav(this); switchMainTab('collections')" href="#">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Collections
+      </a>
+      <a class="nav-item" onclick="activateNav(this); switchMainTab('highlights')" href="#">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        Highlights
+        <span class="nav-badge">18</span>
+      </a>
+      <a class="nav-item" onclick="activateNav(this); switchMainTab('discover')" href="#">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        Discover
+      </a>
+
+      <div class="nav-section-label" style="margin-top:0.75rem">Smart Filters</div>
+      <a class="nav-item" href="#">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.18-3.36"/></svg>
+        Read Later
+        <span class="nav-badge" style="background:var(--accent)">12</span>
+      </a>
+      <a class="nav-item" href="#">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Starred
+      </a>
+      <a class="nav-item" href="#">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Shared with me
+      </a>
+
+      <div class="nav-section-label" style="margin-top:0.75rem">Tags</div>
+      <a class="nav-item" href="#">
+        <span style="width:8px;height:8px;border-radius:50%;background:#F97316;flex-shrink:0"></span>
+        AI &amp; Tech
+      </a>
+      <a class="nav-item" href="#">
+        <span style="width:8px;height:8px;border-radius:50%;background:#6366F1;flex-shrink:0"></span>
+        Design
+      </a>
+      <a class="nav-item" href="#">
+        <span style="width:8px;height:8px;border-radius:50%;background:#10B981;flex-shrink:0"></span>
+        Product
+      </a>
+      <a class="nav-item" href="#">
+        <span style="width:8px;height:8px;border-radius:50%;background:#8B5CF6;flex-shrink:0"></span>
+        Business
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-row">
+        <div class="user-avatar">SR</div>
+        <div class="user-info">
+          <div class="user-name">Sara Rodrigues</div>
+          <div class="user-email">sara@example.com</div>
+        </div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-dim)"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" placeholder="Search your library..." id="search-input" oninput="filterCards(this.value)" />
+        <div class="topbar-kbd">
+          <span class="kbd">⌘</span>
+          <span class="kbd">K</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <!-- THEME TOGGLE -->
+        <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme" id="theme-btn">
+          <svg id="theme-icon-dark" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg id="theme-icon-light" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+        <button class="icon-btn" title="Notifications">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </button>
+        <button class="icon-btn" title="Settings">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+        <button class="btn-add" onclick="document.getElementById('save-modal').classList.add('open')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Save URL
+        </button>
+      </div>
+    </header>
+
+    <!-- PAGE CONTENT -->
+    <div class="page">
+      <!-- STAT CARDS -->
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-card-label">Total saves</div>
+          <div class="stat-card-value" style="color:var(--text)">247</div>
+          <div class="stat-card-change up">+12 this week</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">Collections</div>
+          <div class="stat-card-value" style="color:var(--accent)">8</div>
+          <div class="stat-card-change up">+2 this month</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">Highlights</div>
+          <div class="stat-card-value" style="color:var(--brand)">18</div>
+          <div class="stat-card-change up">+5 this week</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">Read this week</div>
+          <div class="stat-card-value" style="color:#34D399">6</div>
+          <div class="stat-card-change down">-2 vs last week</div>
+        </div>
+      </div>
+
+      <!-- PAGE HEADER -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title" id="page-title">Library</h1>
+          <p class="page-sub" id="page-sub">247 saved items across all sources</p>
+        </div>
+        <div class="page-actions">
+          <button class="icon-btn" title="Import">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </button>
+          <button class="icon-btn" title="Export">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- MAIN TABS -->
+      <div class="tabs-row" id="main-tabs">
+        <button class="tab active" onclick="switchTab('library', this)">
+          All saves <span class="tab-count">247</span>
+        </button>
+        <button class="tab" onclick="switchTab('collections', this)">
+          Collections <span class="tab-count">8</span>
+        </button>
+        <button class="tab" onclick="switchTab('highlights', this)">
+          Highlights <span class="tab-count">18</span>
+        </button>
+        <button class="tab" onclick="switchTab('discover', this)">
+          Discover
+        </button>
+        <button class="tab" onclick="switchTab('activity', this)">
+          Activity
+        </button>
+      </div>
+
+      <!-- ── LIBRARY TAB ── -->
+      <div class="tab-panel active" id="panel-library">
+        <div class="filter-bar">
+          <button class="filter-chip active" onclick="setFilter(this)">All</button>
+          <button class="filter-chip" onclick="setFilter(this)">Unread</button>
+          <button class="filter-chip" onclick="setFilter(this)">Articles</button>
+          <button class="filter-chip" onclick="setFilter(this)">Videos</button>
+          <button class="filter-chip" onclick="setFilter(this)">Newsletters</button>
+          <button class="filter-chip" onclick="setFilter(this)">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Starred
+          </button>
+          <div class="filter-sep"></div>
+          <div class="view-toggle">
+            <button class="view-btn active" onclick="setView('grid', this)" title="Grid view">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            </button>
+            <button class="view-btn" onclick="setView('list', this)" title="List view">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- GRID VIEW -->
+        <div class="items-grid" id="items-grid">
+          <div class="item-card">
+            <div class="item-saved-badge"></div>
+            <div class="item-actions">
+              <button class="item-action-btn" title="Star">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </button>
+              <button class="item-action-btn" title="More">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+              </button>
+            </div>
+            <div class="item-card-top">
+              <div class="item-favicon" style="background:linear-gradient(135deg,#F97316,#FB923C)">M</div>
+              <div>
+                <div class="item-source">medium.com</div>
+                <div class="item-title">Building a second brain with AI-assisted note-taking systems</div>
+              </div>
+            </div>
+            <div class="item-excerpt">How modern knowledge workers are using AI tools to capture, connect, and surface ideas from their daily reading and note-taking habits.</div>
+            <div class="item-footer">
+              <span class="tag tag-orange">AI</span>
+              <span class="tag tag-indigo">Productivity</span>
+              <span class="item-read-time">8 min read</span>
+            </div>
+          </div>
+
+          <div class="item-card">
+            <div class="item-actions">
+              <button class="item-action-btn" title="Star">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </button>
+              <button class="item-action-btn" title="More">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+              </button>
+            </div>
+            <div class="item-card-top">
+              <div class="item-favicon" style="background:linear-gradient(135deg,#6366F1,#818CF8)">F</div>
+              <div>
+                <div class="item-source">figma.com</div>
+                <div class="item-title">The design systems handbook: principles every designer should know</div>
+              </div>
+            </div>
+            <div class="item-excerpt">A comprehensive guide to building scalable design systems that work across platforms and product lines, with case studies from top companies.</div>
+            <div class="item-footer">
+              <span class="tag tag-indigo">Design</span>
+              <span class="item-read-time">12 min read</span>
+            </div>
+          </div>
+
+          <div class="item-card">
+            <div class="item-actions">
+              <button class="item-action-btn" title="Star">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </button>
+              <button class="item-action-btn" title="More">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+              </button>
+            </div>
+            <div class="item-card-top">
+              <div class="item-favicon" style="background:linear-gradient(135deg,#10B981,#34D399)">S</div>
+              <div>
+                <div class="item-source">stripe.com</div>
+                <div class="item-title">How Stripe builds products: 15 years of product lessons</div>
+              </div>
+            </div>
+            <div class="item-excerpt">Patrick Collison shares the product development philosophy that helped Stripe become one of the most admired product companies in the world.</div>
+            <div class="item-footer">
+              <span class="tag tag-green">Product</span>
+              <span class="tag tag-orange">Business</span>
+              <span class="item-read-time">6 min read</span>
+            </div>
+          </div>
+
+          <div class="item-card">
+            <div class="item-actions">
+              <button class="item-action-btn" title="Star">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </button>
+              <button class="item-action-btn" title="More">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+              </button>
+            </div>
+            <div class="item-card-top">
+              <div class="item-favicon" style="background:linear-gradient(135deg,#8B5CF6,#A78BFA)">V</div>
+              <div>
+                <div class="item-source">vercel.com</div>
+                <div class="item-title">Ship fast, ship often: the Vercel deployment philosophy</div>
+              </div>
+            </div>
+            <div class="item-excerpt">How continuous deployment and preview environments changed the way modern development teams think about shipping code to production.</div>
+            <div class="item-footer">
+              <span class="tag tag-purple">Engineering</span>
+              <span class="item-read-time">9 min read</span>
+            </div>
+          </div>
+
+          <div class="item-card">
+            <div class="item-actions">
+              <button class="item-action-btn" title="Star">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </button>
+              <button class="item-action-btn" title="More">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+              </button>
+            </div>
+            <div class="item-card-top">
+              <div class="item-favicon" style="background:linear-gradient(135deg,#EC4899,#F472B6)">P</div>
+              <div>
+                <div class="item-source">paulgraham.com</div>
+                <div class="item-title">Hackers and painters: the surprising overlap between coding and art</div>
+              </div>
+            </div>
+            <div class="item-excerpt">Paul Graham's seminal essay on why programming is more like painting than engineering, and what this means for how we should learn to code.</div>
+            <div class="item-footer">
+              <span class="tag tag-pink">Essay</span>
+              <span class="tag tag-orange">AI</span>
+              <span class="item-read-time">14 min read</span>
+            </div>
+          </div>
+
+          <div class="item-card">
+            <div class="item-actions">
+              <button class="item-action-btn" title="Star">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </button>
+              <button class="item-action-btn" title="More">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+              </button>
+            </div>
+            <div class="item-card-top">
+              <div class="item-favicon" style="background:linear-gradient(135deg,#0EA5E9,#38BDF8)">L</div>
+              <div>
+                <div class="item-source">linear.app</div>
+                <div class="item-title">Building Linear: the software for ambitious teams</div>
+              </div>
+            </div>
+            <div class="item-excerpt">Inside the product decisions that made Linear the preferred issue tracker for high-growth startups and engineering teams that care about speed.</div>
+            <div class="item-footer">
+              <span class="tag tag-indigo">Product</span>
+              <span class="tag tag-green">SaaS</span>
+              <span class="item-read-time">11 min read</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- LIST VIEW (hidden) -->
+        <div class="items-list" id="items-list" style="display:none">
+          <div class="item-row">
+            <div class="item-row-favicon" style="background:linear-gradient(135deg,#F97316,#FB923C);border-radius:6px;width:28px;height:28px"></div>
+            <div class="item-row-info">
+              <div class="item-row-title">Building a second brain with AI-assisted note-taking systems</div>
+              <div class="item-row-meta">medium.com · 8 min read</div>
+            </div>
+            <div class="item-row-tags"><span class="tag tag-orange">AI</span><span class="tag tag-indigo">Productivity</span></div>
+            <div class="item-row-time">2h ago</div>
+          </div>
+          <div class="item-row">
+            <div class="item-row-favicon" style="background:linear-gradient(135deg,#6366F1,#818CF8);border-radius:6px;width:28px;height:28px"></div>
+            <div class="item-row-info">
+              <div class="item-row-title">The design systems handbook: principles every designer should know</div>
+              <div class="item-row-meta">figma.com · 12 min read</div>
+            </div>
+            <div class="item-row-tags"><span class="tag tag-indigo">Design</span></div>
+            <div class="item-row-time">5h ago</div>
+          </div>
+          <div class="item-row">
+            <div class="item-row-favicon" style="background:linear-gradient(135deg,#10B981,#34D399);border-radius:6px;width:28px;height:28px"></div>
+            <div class="item-row-info">
+              <div class="item-row-title">How Stripe builds products: 15 years of product lessons</div>
+              <div class="item-row-meta">stripe.com · 6 min read</div>
+            </div>
+            <div class="item-row-tags"><span class="tag tag-green">Product</span></div>
+            <div class="item-row-time">Yesterday</div>
+          </div>
+          <div class="item-row">
+            <div class="item-row-favicon" style="background:linear-gradient(135deg,#8B5CF6,#A78BFA);border-radius:6px;width:28px;height:28px"></div>
+            <div class="item-row-info">
+              <div class="item-row-title">Ship fast, ship often: the Vercel deployment philosophy</div>
+              <div class="item-row-meta">vercel.com · 9 min read</div>
+            </div>
+            <div class="item-row-tags"><span class="tag tag-purple">Engineering</span></div>
+            <div class="item-row-time">2 days ago</div>
+          </div>
+          <div class="item-row">
+            <div class="item-row-favicon" style="background:linear-gradient(135deg,#EC4899,#F472B6);border-radius:6px;width:28px;height:28px"></div>
+            <div class="item-row-info">
+              <div class="item-row-title">Hackers and painters: the surprising overlap between coding and art</div>
+              <div class="item-row-meta">paulgraham.com · 14 min read</div>
+            </div>
+            <div class="item-row-tags"><span class="tag tag-pink">Essay</span></div>
+            <div class="item-row-time">3 days ago</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── COLLECTIONS TAB ── -->
+      <div class="tab-panel" id="panel-collections">
+        <div class="collections-grid">
+          <div class="collection-card">
+            <div class="collection-icon" style="background:rgba(249,115,22,0.12)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            </div>
+            <div class="collection-name">AI Research</div>
+            <div class="collection-count">64 items · Updated 2h ago</div>
+            <div class="collection-bar"><div class="collection-bar-fill" style="width:74%;background:linear-gradient(90deg,#F97316,#FB923C)"></div></div>
+          </div>
+          <div class="collection-card">
+            <div class="collection-icon" style="background:rgba(99,102,241,0.12)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            </div>
+            <div class="collection-name">Design Inspiration</div>
+            <div class="collection-count">38 items · Updated yesterday</div>
+            <div class="collection-bar"><div class="collection-bar-fill" style="width:44%;background:linear-gradient(90deg,#6366F1,#818CF8)"></div></div>
+          </div>
+          <div class="collection-card">
+            <div class="collection-icon" style="background:rgba(16,185,129,0.12)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div class="collection-name">Product Management</div>
+            <div class="collection-count">51 items · Updated 3 days ago</div>
+            <div class="collection-bar"><div class="collection-bar-fill" style="width:59%;background:linear-gradient(90deg,#10B981,#34D399)"></div></div>
+          </div>
+          <div class="collection-card">
+            <div class="collection-icon" style="background:rgba(139,92,246,0.12)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <div class="collection-name">Growth &amp; Marketing</div>
+            <div class="collection-count">29 items · Updated last week</div>
+            <div class="collection-bar"><div class="collection-bar-fill" style="width:34%;background:linear-gradient(90deg,#8B5CF6,#A78BFA)"></div></div>
+          </div>
+          <div class="collection-card">
+            <div class="collection-icon" style="background:rgba(236,72,153,0.12)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EC4899" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            </div>
+            <div class="collection-name">Writing &amp; Essays</div>
+            <div class="collection-count">22 items · Updated 5 days ago</div>
+            <div class="collection-bar"><div class="collection-bar-fill" style="width:26%;background:linear-gradient(90deg,#EC4899,#F472B6)"></div></div>
+          </div>
+          <div class="collection-card add-new" onclick="document.getElementById('save-modal').classList.add('open')">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span style="font-size:0.875rem;font-weight:600">New collection</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── HIGHLIGHTS TAB ── -->
+      <div class="tab-panel" id="panel-highlights">
+        <div class="highlights-list">
+          <div class="highlight-card">
+            <div class="highlight-text">"The best way to have a good idea is to have lots of ideas and then throw away the bad ones. Most people stop at the first idea and wonder why it's not working."</div>
+            <div class="highlight-source">
+              <div class="highlight-source-dot" style="background:linear-gradient(135deg,#F97316,#FB923C)"></div>
+              <span>Building a second brain — medium.com</span>
+            </div>
+            <div class="highlight-note">Note: This connects to the divergent thinking principle in IDEO's design methodology</div>
+          </div>
+          <div class="highlight-card" style="border-left-color:var(--accent)">
+            <div class="highlight-text">"A design system is not a project. It is a product serving products. It needs to be actively maintained, versioned, documented, and evangelized."</div>
+            <div class="highlight-source">
+              <div class="highlight-source-dot" style="background:linear-gradient(135deg,#6366F1,#818CF8)"></div>
+              <span>The design systems handbook — figma.com</span>
+            </div>
+          </div>
+          <div class="highlight-card" style="border-left-color:#10B981">
+            <div class="highlight-text">"Move fast and fix things. The faster you ship, the faster you learn whether what you built is what people actually need."</div>
+            <div class="highlight-source">
+              <div class="highlight-source-dot" style="background:linear-gradient(135deg,#10B981,#34D399)"></div>
+              <span>How Stripe builds products — stripe.com</span>
+            </div>
+            <div class="highlight-note">Note: Counter-intuitive given Stripe's reputation for thoughtful, slow design</div>
+          </div>
+          <div class="highlight-card" style="border-left-color:#8B5CF6">
+            <div class="highlight-text">"Good programmers know what to write. Great programmers know what to rewrite (and reuse). The key skill is not solving problems but recognizing when a solution already exists."</div>
+            <div class="highlight-source">
+              <div class="highlight-source-dot" style="background:linear-gradient(135deg,#8B5CF6,#A78BFA)"></div>
+              <span>Hackers and painters — paulgraham.com</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── DISCOVER TAB ── -->
+      <div class="tab-panel" id="panel-discover">
+        <div class="discover-hero">
+          <div>
+            <h3>Your personalized digest is ready</h3>
+            <p>Based on your reading history, Shelf found 14 new articles you'll likely enjoy. Updated daily based on what you save and read.</p>
+          </div>
+          <div class="discover-stats">
+            <div class="discover-stat">
+              <div class="discover-stat-num">14</div>
+              <div class="discover-stat-label">New today</div>
+            </div>
+            <div class="discover-stat">
+              <div class="discover-stat-num">92%</div>
+              <div class="discover-stat-label">Relevance</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="discover-section-title">Trending in your network</div>
+        <div class="trending-list">
+          <div class="trending-item">
+            <div class="trending-rank">1</div>
+            <div class="item-favicon" style="background:linear-gradient(135deg,#F97316,#FB923C);width:28px;height:28px;border-radius:6px;font-size:0.75rem">O</div>
+            <div class="trending-info">
+              <div class="trending-title">OpenAI's new model changes everything about how we think about reasoning</div>
+              <div class="trending-meta">openai.com · 7 min read</div>
+            </div>
+            <div class="trending-saves">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              2.4k
+            </div>
+          </div>
+          <div class="trending-item">
+            <div class="trending-rank">2</div>
+            <div class="item-favicon" style="background:linear-gradient(135deg,#6366F1,#818CF8);width:28px;height:28px;border-radius:6px;font-size:0.75rem">Y</div>
+            <div class="trending-info">
+              <div class="trending-title">Why Y Combinator is the best MBA you can get (and it's 3 months, not 2 years)</div>
+              <div class="trending-meta">ycombinator.com · 5 min read</div>
+            </div>
+            <div class="trending-saves">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              1.8k
+            </div>
+          </div>
+          <div class="trending-item">
+            <div class="trending-rank">3</div>
+            <div class="item-favicon" style="background:linear-gradient(135deg,#10B981,#34D399);width:28px;height:28px;border-radius:6px;font-size:0.75rem">N</div>
+            <div class="trending-info">
+              <div class="trending-title">The next billion users won't look like Silicon Valley — designing for emerging markets</div>
+              <div class="trending-meta">nngroup.com · 9 min read</div>
+            </div>
+            <div class="trending-saves">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              967
+            </div>
+          </div>
+        </div>
+
+        <div class="discover-section-title">Recommended for you</div>
+        <div class="items-grid">
+          <div class="item-card">
+            <div class="item-card-top">
+              <div class="item-favicon" style="background:linear-gradient(135deg,#F97316,#FDBA74)">A</div>
+              <div>
+                <div class="item-source">anthropic.com</div>
+                <div class="item-title">Constitutional AI: how we built Claude's values from scratch</div>
+              </div>
+            </div>
+            <div class="item-excerpt">The technical and philosophical decisions behind teaching a language model to be helpful, harmless, and honest.</div>
+            <div class="item-footer">
+              <span class="tag tag-orange">AI</span>
+              <span class="item-read-time">15 min read</span>
+            </div>
+          </div>
+          <div class="item-card">
+            <div class="item-card-top">
+              <div class="item-favicon" style="background:linear-gradient(135deg,#6366F1,#A5B4FC)">N</div>
+              <div>
+                <div class="item-source">notion.com</div>
+                <div class="item-title">How Notion went from 0 to 30M users without a traditional sales team</div>
+              </div>
+            </div>
+            <div class="item-excerpt">Product-led growth, community, and word-of-mouth as the entire go-to-market strategy for a $10B company.</div>
+            <div class="item-footer">
+              <span class="tag tag-indigo">Product</span>
+              <span class="tag tag-green">Growth</span>
+              <span class="item-read-time">8 min read</span>
+            </div>
+          </div>
+          <div class="item-card">
+            <div class="item-card-top">
+              <div class="item-favicon" style="background:linear-gradient(135deg,#EC4899,#F9A8D4)">R</div>
+              <div>
+                <div class="item-source">rand.org</div>
+                <div class="item-title">The science of learning: what research says about how memory actually works</div>
+              </div>
+            </div>
+            <div class="item-excerpt">Spaced repetition, interleaving, and retrieval practice — the three techniques with the strongest research backing for long-term retention.</div>
+            <div class="item-footer">
+              <span class="tag tag-pink">Research</span>
+              <span class="item-read-time">11 min read</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── ACTIVITY TAB ── -->
+      <div class="tab-panel" id="panel-activity">
+        <div style="display:grid;grid-template-columns:1fr 320px;gap:1.5rem">
+          <div>
+            <div style="font-size:0.875rem;font-weight:700;color:var(--text-muted);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:0.875rem">Recent activity</div>
+            <div class="activity-list">
+              <div class="activity-item">
+                <div class="activity-icon" style="background:rgba(249,115,22,0.12)">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                </div>
+                <div class="activity-text">Saved <strong>Building a second brain with AI-assisted note-taking</strong> from medium.com</div>
+                <div class="activity-time">2h ago</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon" style="background:rgba(99,102,241,0.12)">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                </div>
+                <div class="activity-text">Added 3 items to <strong>AI Research</strong> collection</div>
+                <div class="activity-time">4h ago</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon" style="background:rgba(249,115,22,0.12)">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                </div>
+                <div class="activity-text">Highlighted a passage from <strong>The design systems handbook</strong></div>
+                <div class="activity-time">5h ago</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon" style="background:rgba(16,185,129,0.12)">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <div class="activity-text">Marked <strong>How Stripe builds products</strong> as read</div>
+                <div class="activity-time">Yesterday</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon" style="background:rgba(139,92,246,0.12)">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                </div>
+                <div class="activity-text">Shared <strong>Design Inspiration</strong> collection with 2 teammates</div>
+                <div class="activity-time">2 days ago</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-icon" style="background:rgba(249,115,22,0.12)">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                </div>
+                <div class="activity-text">Saved <strong>Ship fast, ship often: the Vercel deployment philosophy</strong></div>
+                <div class="activity-time">2 days ago</div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:0.875rem;font-weight:700;color:var(--text-muted);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:0.875rem">This week</div>
+            <div class="stat-card" style="margin-bottom:0.875rem">
+              <div class="stat-card-label">Saves this week</div>
+              <div class="stat-card-value" style="color:var(--brand)">12</div>
+              <div class="stat-card-change up">Best week this month</div>
+            </div>
+            <div class="stat-card" style="margin-bottom:0.875rem">
+              <div class="stat-card-label">Reading time</div>
+              <div class="stat-card-value" style="color:var(--accent);font-size:1.5rem">2h 34m</div>
+              <div class="stat-card-change up">+18% vs last week</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-label">Top tag this week</div>
+              <div style="margin-top:0.5rem"><span class="tag tag-orange" style="font-size:0.8125rem;padding:0.25rem 0.625rem">AI</span></div>
+              <div class="stat-card-change up" style="margin-top:0.5rem">7 saves with this tag</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- .page -->
+  </div><!-- .main -->
+
+  <!-- SAVE URL MODAL -->
+  <div class="modal-overlay" id="save-modal" onclick="if(event.target===this)this.classList.remove('open')">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Save to Shelf</div>
+        <button class="modal-close" onclick="document.getElementById('save-modal').classList.remove('open')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <input class="modal-input" type="url" placeholder="Paste any URL to save..." id="url-input" />
+      <input class="modal-input" type="text" placeholder="Add note (optional)" />
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem">
+        <span class="tag tag-orange" style="cursor:pointer;padding:0.25rem 0.625rem;font-size:0.8rem">AI</span>
+        <span class="tag tag-indigo" style="cursor:pointer;padding:0.25rem 0.625rem;font-size:0.8rem">Design</span>
+        <span class="tag tag-green" style="cursor:pointer;padding:0.25rem 0.625rem;font-size:0.8rem">Product</span>
+        <span class="filter-chip" style="font-size:0.75rem;padding:0.25rem 0.5rem">+ Add tag</span>
+      </div>
+      <button class="modal-btn" onclick="saveUrl()">Save to library</button>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast">
+    <div class="toast-dot"></div>
+    <span id="toast-text">Saved to library</span>
+  </div>
+
+  <script>
+    // ── THEME TOGGLE ──
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      document.getElementById('theme-icon-dark').style.display = isDark ? 'none' : '';
+      document.getElementById('theme-icon-light').style.display = isDark ? '' : 'none';
+    }
+
+    // ── TABS ──
+    function switchTab(panelId, btn) {
+      // deactivate all tabs and panels
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      // activate clicked
+      if (btn) btn.classList.add('active');
+      const panel = document.getElementById('panel-' + panelId);
+      if (panel) panel.classList.add('active');
+      // update page title
+      const titles = {
+        library: ['Library', '247 saved items across all sources'],
+        collections: ['Collections', '8 collections · 204 items organized'],
+        highlights: ['Highlights', '18 highlighted passages with notes'],
+        discover: ['Discover', 'AI-powered recommendations based on your library'],
+        activity: ['Activity', 'Your recent saves, reads, and highlights']
+      };
+      if (titles[panelId]) {
+        document.getElementById('page-title').textContent = titles[panelId][0];
+        document.getElementById('page-sub').textContent = titles[panelId][1];
+      }
+    }
+
+    function switchMainTab(tabId) {
+      const tabs = document.querySelectorAll('.tab');
+      const map = { library: 0, collections: 1, highlights: 2, discover: 3, activity: 4 };
+      tabs.forEach(t => t.classList.remove('active'));
+      if (tabs[map[tabId]]) tabs[map[tabId]].classList.add('active');
+    }
+
+    // ── SIDEBAR NAV ──
+    function activateNav(el) {
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    // ── FILTER CHIPS ──
+    function setFilter(el) {
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    // ── VIEW TOGGLE ──
+    function setView(view, btn) {
+      document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const grid = document.getElementById('items-grid');
+      const list = document.getElementById('items-list');
+      if (view === 'grid') { grid.style.display = ''; list.style.display = 'none'; }
+      else { grid.style.display = 'none'; list.style.display = ''; }
+    }
+
+    // ── SEARCH FILTER ──
+    function filterCards(query) {
+      const q = query.toLowerCase();
+      document.querySelectorAll('.item-card, .item-row').forEach(card => {
+        const text = card.textContent.toLowerCase();
+        card.style.display = text.includes(q) ? '' : 'none';
+      });
+    }
+
+    // ── SAVE URL ──
+    function saveUrl() {
+      const url = document.getElementById('url-input').value;
+      document.getElementById('save-modal').classList.remove('open');
+      document.getElementById('url-input').value = '';
+      showToast(url ? 'Saved to library' : 'Collection created');
+    }
+
+    // ── TOAST ──
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-text').textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2800);
+    }
+
+    // ── KEYBOARD SHORTCUTS ──
+    document.addEventListener('keydown', function(e) {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        document.getElementById('search-input').focus();
+      }
+      if (e.key === 'Escape') {
+        document.getElementById('save-modal').classList.remove('open');
+        document.getElementById('search-input').blur();
+      }
+      if (e.key === 's' && !e.metaKey && !e.ctrlKey && document.activeElement.tagName !== 'INPUT') {
+        document.getElementById('save-modal').classList.add('open');
+        setTimeout(() => document.getElementById('url-input').focus(), 50);
+      }
+    });
+  </script>
+</body>
+</html>

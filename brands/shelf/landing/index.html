@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shelf — Your digital content, beautifully organized</title>
+  <meta name="description" content="Shelf is the smart content library for curious minds. Save articles, links, and resources. Organize with collections. Discover what matters." />
+  <meta property="og:title" content="Shelf — Your digital content, beautifully organized" />
+  <meta property="og:description" content="Save, organize, and rediscover your best content. Shelf is your personal knowledge library." />
+  <meta property="og:image" content="/brands/shelf/og-image.png" />
+  <meta property="og:type" content="website" />
+  <link rel="icon" type="image/svg+xml" href="../../../assets/favicons/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --brand: #F97316;
+      --brand-light: #FB923C;
+      --brand-dark: #EA6A0A;
+      --accent: #6366F1;
+      --accent-light: #818CF8;
+      --bg: #0a0a12;
+      --surface: #111120;
+      --surface-2: #1a1a2e;
+      --border: rgba(255,255,255,0.08);
+      --text: #f9fafb;
+      --text-muted: #9ca3af;
+      --text-dim: #4b5563;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      height: 64px;
+      background: rgba(10,10,18,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+    .nav-logo img {
+      height: 32px;
+      width: auto;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .btn-ghost {
+      padding: 0.5rem 1.25rem;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      font-weight: 500;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .btn-ghost:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+    .btn-primary {
+      padding: 0.5rem 1.25rem;
+      background: var(--brand);
+      border: none;
+      color: #fff;
+      font-size: 0.875rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .btn-primary:hover { background: var(--brand-light); transform: translateY(-1px); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8rem 2rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, rgba(249,115,22,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: 30%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.375rem 0.875rem;
+      background: rgba(249,115,22,0.1);
+      border: 1px solid rgba(249,115,22,0.25);
+      border-radius: 100px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--brand-light);
+      margin-bottom: 1.75rem;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--brand);
+      border-radius: 50%;
+      animation: pulse 2s ease infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.4); }
+    }
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      max-width: 800px;
+      margin-bottom: 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+    .hero h1 .highlight {
+      background: linear-gradient(135deg, var(--brand) 0%, var(--brand-light) 50%, #FDBA74 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: 1.125rem;
+      color: var(--text-muted);
+      max-width: 560px;
+      margin-bottom: 2.5rem;
+      position: relative;
+      z-index: 1;
+      line-height: 1.7;
+    }
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 3rem;
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .btn-hero {
+      padding: 0.875rem 2rem;
+      background: var(--brand);
+      border: none;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 10px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      font-family: inherit;
+      box-shadow: 0 4px 24px rgba(249,115,22,0.3);
+    }
+    .btn-hero:hover { background: var(--brand-light); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(249,115,22,0.4); }
+    .btn-hero-ghost {
+      padding: 0.875rem 2rem;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 1rem;
+      font-weight: 500;
+      border-radius: 10px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .btn-hero-ghost:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+    .hero-social-proof {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      position: relative;
+      z-index: 1;
+      font-size: 0.875rem;
+      color: var(--text-dim);
+    }
+    .hero-avatars {
+      display: flex;
+    }
+    .hero-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid var(--bg);
+      margin-left: -8px;
+      background: linear-gradient(135deg, var(--brand) 0%, var(--accent) 100%);
+    }
+    .hero-avatar:first-child { margin-left: 0; }
+    .hero-avatar-2 { background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%); }
+    .hero-avatar-3 { background: linear-gradient(135deg, #10B981 0%, #34D399 100%); }
+    .hero-avatar-4 { background: linear-gradient(135deg, #8B5CF6 0%, var(--accent-light) 100%); }
+
+    /* HERO MOCKUP */
+    .hero-mockup {
+      margin-top: 4rem;
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 900px;
+    }
+    .mockup-window {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 40px 120px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
+    }
+    .mockup-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.875rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+    }
+    .mockup-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+    .mockup-dot-red { background: #FF5F57; }
+    .mockup-dot-yellow { background: #FEBC2E; }
+    .mockup-dot-green { background: #28C840; }
+    .mockup-content {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      min-height: 380px;
+    }
+    .mockup-sidebar {
+      background: rgba(255,255,255,0.01);
+      border-right: 1px solid var(--border);
+      padding: 1.25rem 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    .mockup-sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.625rem;
+      margin-bottom: 1rem;
+    }
+    .mockup-sidebar-logo-mark {
+      width: 22px;
+      height: 22px;
+      background: var(--brand);
+      border-radius: 5px;
+    }
+    .mockup-sidebar-logo-text {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .mockup-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.625rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .mockup-nav-item.active {
+      background: rgba(249,115,22,0.12);
+      color: var(--brand-light);
+    }
+    .mockup-nav-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: 0.6;
+    }
+    .mockup-main {
+      padding: 1.25rem;
+    }
+    .mockup-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    .mockup-title {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .mockup-search {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.375rem 0.75rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+    .mockup-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+    }
+    .mockup-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .mockup-card-favicon {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+    }
+    .mockup-card-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.25rem;
+      line-height: 1.3;
+    }
+    .mockup-card-meta {
+      font-size: 0.6875rem;
+      color: var(--text-dim);
+    }
+    .mockup-tag {
+      display: inline-block;
+      padding: 0.125rem 0.5rem;
+      border-radius: 100px;
+      font-size: 0.625rem;
+      font-weight: 600;
+      margin-top: 0.375rem;
+    }
+    .mockup-tag-orange { background: rgba(249,115,22,0.12); color: var(--brand-light); }
+    .mockup-tag-indigo { background: rgba(99,102,241,0.12); color: var(--accent-light); }
+    .mockup-tag-green { background: rgba(16,185,129,0.12); color: #34D399; }
+
+    /* SECTIONS */
+    section {
+      padding: 6rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .section-label {
+      display: inline-block;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--brand);
+      margin-bottom: 1rem;
+    }
+    .section-heading {
+      font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+    .section-sub {
+      font-size: 1.0625rem;
+      color: var(--text-muted);
+      max-width: 520px;
+      line-height: 1.7;
+    }
+    .section-center { text-align: center; }
+    .section-center .section-sub { margin: 0 auto; }
+
+    /* FEATURES GRID */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3.5rem;
+    }
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      transition: all 0.3s;
+    }
+    .feature-card:hover {
+      border-color: rgba(249,115,22,0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 40px rgba(249,115,22,0.06);
+    }
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+      font-size: 1.25rem;
+    }
+    .feature-icon-orange { background: rgba(249,115,22,0.12); }
+    .feature-icon-indigo { background: rgba(99,102,241,0.12); }
+    .feature-icon-teal { background: rgba(20,184,166,0.12); }
+    .feature-icon-violet { background: rgba(139,92,246,0.12); }
+    .feature-card h3 {
+      font-size: 1.0625rem;
+      font-weight: 700;
+      margin-bottom: 0.625rem;
+    }
+    .feature-card p {
+      font-size: 0.9375rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    /* STATS */
+    .stats-section {
+      padding: 5rem 2rem;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .stats-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      text-align: center;
+    }
+    .stat-num {
+      font-size: 2.75rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--brand) 0%, var(--brand-light) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    .stat-label {
+      font-size: 0.9375rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* HOW IT WORKS */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2rem;
+      margin-top: 3.5rem;
+      position: relative;
+    }
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 24px;
+      left: calc(16.66% + 12px);
+      right: calc(16.66% + 12px);
+      height: 1px;
+      background: linear-gradient(90deg, var(--brand) 0%, var(--accent) 100%);
+      opacity: 0.25;
+    }
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.875rem;
+    }
+    .step-num {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--brand) 0%, var(--brand-light) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(249,115,22,0.3);
+    }
+    .step h3 {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+    .step p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    /* TESTIMONIALS */
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+      margin-top: 3rem;
+    }
+    .testimonial {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.75rem;
+    }
+    .testimonial-quote {
+      font-size: 0.9375rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 1.25rem;
+    }
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .testimonial-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .testimonial-name {
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+    .testimonial-role {
+      font-size: 0.8125rem;
+      color: var(--text-dim);
+    }
+
+    /* PRICING */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3.5rem;
+      align-items: start;
+    }
+    .pricing-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2.25rem;
+    }
+    .pricing-card.featured {
+      border-color: var(--brand);
+      background: linear-gradient(135deg, rgba(249,115,22,0.06) 0%, rgba(99,102,241,0.04) 100%);
+      position: relative;
+    }
+    .pricing-badge {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 0.25rem 0.875rem;
+      background: var(--brand);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border-radius: 100px;
+      white-space: nowrap;
+    }
+    .pricing-name {
+      font-size: 1.0625rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .pricing-price {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.25rem;
+    }
+    .pricing-price span {
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .pricing-desc {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+    .pricing-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+    .pricing-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.625rem;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    .pricing-features li::before {
+      content: '✓';
+      color: var(--brand);
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 0.05rem;
+    }
+    .pricing-btn {
+      display: block;
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 10px;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      font-family: inherit;
+      border: none;
+    }
+    .pricing-btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+    .pricing-btn-outline:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
+    .pricing-btn-fill {
+      background: var(--brand);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(249,115,22,0.3);
+    }
+    .pricing-btn-fill:hover { background: var(--brand-light); }
+
+    /* CTA */
+    .cta-section {
+      padding: 6rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(249,115,22,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-inner {
+      max-width: 640px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    .cta-section h2 {
+      font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+    .cta-section p {
+      font-size: 1.0625rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      line-height: 1.7;
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 3rem 2rem 2rem;
+    }
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr repeat(3, 1fr);
+      gap: 3rem;
+      padding-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+    .footer-brand p {
+      font-size: 0.875rem;
+      color: var(--text-dim);
+      margin-top: 0.875rem;
+      line-height: 1.6;
+      max-width: 260px;
+    }
+    .footer-col h4 {
+      font-size: 0.8125rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.625rem;
+    }
+    .footer-col ul a {
+      font-size: 0.875rem;
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-col ul a:hover { color: var(--text-muted); }
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8125rem;
+      color: var(--text-dim);
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    /* SVG icons inline */
+    .icon { display: inline-block; vertical-align: middle; }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="/" class="nav-logo">
+      <img src="../../../assets/logos/logo-wordmark-dark.svg" alt="Shelf" />
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#how-it-works">How it works</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#testimonials">Testimonials</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="/auth/login" class="btn-ghost">Log in</a>
+      <a href="/auth/register" class="btn-primary">Get started free</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">Now in public beta — free forever for personal use</div>
+    <h1>Your digital content,<br /><span class="highlight">beautifully organized</span></h1>
+    <p>
+      Shelf is the smart content library for curious minds. Save articles, links, and resources in seconds.
+      Organize with collections. Discover what you saved when you need it most.
+    </p>
+    <div class="hero-actions">
+      <a href="/auth/register" class="btn-hero">Start organizing for free</a>
+      <a href="#how-it-works" class="btn-hero-ghost">See how it works</a>
+    </div>
+    <div class="hero-social-proof">
+      <div class="hero-avatars">
+        <div class="hero-avatar"></div>
+        <div class="hero-avatar hero-avatar-2"></div>
+        <div class="hero-avatar hero-avatar-3"></div>
+        <div class="hero-avatar hero-avatar-4"></div>
+      </div>
+      <span>Trusted by 12,400+ researchers, writers, and builders</span>
+    </div>
+
+    <!-- HERO MOCKUP -->
+    <div class="hero-mockup">
+      <div class="mockup-window">
+        <div class="mockup-bar">
+          <div class="mockup-dot mockup-dot-red"></div>
+          <div class="mockup-dot mockup-dot-yellow"></div>
+          <div class="mockup-dot mockup-dot-green"></div>
+        </div>
+        <div class="mockup-content">
+          <div class="mockup-sidebar">
+            <div class="mockup-sidebar-logo">
+              <div class="mockup-sidebar-logo-mark"></div>
+              <span class="mockup-sidebar-logo-text">Shelf</span>
+            </div>
+            <div class="mockup-nav-item active">
+              <div class="mockup-nav-dot"></div> Library
+            </div>
+            <div class="mockup-nav-item">
+              <div class="mockup-nav-dot"></div> Collections
+            </div>
+            <div class="mockup-nav-item">
+              <div class="mockup-nav-dot"></div> Highlights
+            </div>
+            <div class="mockup-nav-item">
+              <div class="mockup-nav-dot"></div> Discover
+            </div>
+            <div class="mockup-nav-item">
+              <div class="mockup-nav-dot"></div> Shared
+            </div>
+          </div>
+          <div class="mockup-main">
+            <div class="mockup-header">
+              <div class="mockup-title">All saves — 247 items</div>
+              <div class="mockup-search">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                Search library...
+              </div>
+            </div>
+            <div class="mockup-grid">
+              <div class="mockup-card">
+                <div class="mockup-card-favicon" style="background:linear-gradient(135deg,#F97316,#FB923C)"></div>
+                <div class="mockup-card-title">Building a second brain with AI-assisted note-taking</div>
+                <div class="mockup-card-meta">medium.com · 8 min read</div>
+                <span class="mockup-tag mockup-tag-orange">AI</span>
+              </div>
+              <div class="mockup-card">
+                <div class="mockup-card-favicon" style="background:linear-gradient(135deg,#6366F1,#818CF8)"></div>
+                <div class="mockup-card-title">The design systems handbook: core principles</div>
+                <div class="mockup-card-meta">figma.com · 12 min read</div>
+                <span class="mockup-tag mockup-tag-indigo">Design</span>
+              </div>
+              <div class="mockup-card">
+                <div class="mockup-card-favicon" style="background:linear-gradient(135deg,#10B981,#34D399)"></div>
+                <div class="mockup-card-title">How Stripe builds products: lessons from 15 years</div>
+                <div class="mockup-card-meta">stripe.com · 6 min read</div>
+                <span class="mockup-tag mockup-tag-green">Product</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-section">
+    <div class="stats-inner">
+      <div>
+        <div class="stat-num">12.4K+</div>
+        <div class="stat-label">Active users</div>
+      </div>
+      <div>
+        <div class="stat-num">4.2M</div>
+        <div class="stat-label">Items saved</div>
+      </div>
+      <div>
+        <div class="stat-num">98%</div>
+        <div class="stat-label">User retention</div>
+      </div>
+      <div>
+        <div class="stat-num">&lt;100ms</div>
+        <div class="stat-label">Save speed</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="section-label">Features</div>
+    <h2 class="section-heading">Everything your library needs</h2>
+    <p class="section-sub">
+      From quick saves to deep research sessions — Shelf keeps every piece of content organized and at your fingertips.
+    </p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon feature-icon-orange">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <h3>One-click saves</h3>
+        <p>Install the browser extension and save any page in under a second. Shelf automatically extracts the title, description, and reading time.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon feature-icon-indigo">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        </div>
+        <h3>Smart collections</h3>
+        <p>Group content into collections that update automatically based on your rules. Tag once — the right content flows to the right place.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon feature-icon-teal">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#14B8A6" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </div>
+        <h3>Full-text search</h3>
+        <p>Search across everything you've ever saved — titles, content, notes, and highlights. Find any article in milliseconds.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon feature-icon-violet">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </div>
+        <h3>Highlights &amp; notes</h3>
+        <p>Mark up any saved page with highlights and personal notes. Build a second brain from the content that matters most to you.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon feature-icon-orange">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h3>Team sharing</h3>
+        <p>Share collections with teammates. Build a shared research library that everyone can contribute to and discover from.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon feature-icon-indigo">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6366F1" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <h3>AI-powered discovery</h3>
+        <p>Shelf learns what you read and surfaces forgotten gems and related content at the perfect moment. Your library gets smarter over time.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how-it-works">
+    <div class="section-center">
+      <div class="section-label">How it works</div>
+      <h2 class="section-heading">From save to insight in 3 steps</h2>
+      <p class="section-sub">No more lost tabs, forgotten links, or cluttered bookmarks. Shelf makes knowledge capture effortless.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Save anything</h3>
+        <p>Use the browser extension, mobile share sheet, or paste any URL directly. Shelf captures the full content offline.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Organize your way</h3>
+        <p>Add tags, create collections, and write notes as you go. Smart filters do the heavy lifting automatically.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Find it when you need it</h3>
+        <p>Search your entire library in milliseconds. AI surfaces the right content at the right time — without you asking.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="testimonials">
+    <div class="section-center">
+      <div class="section-label">Testimonials</div>
+      <h2 class="section-heading">Used by people who love learning</h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial">
+        <p class="testimonial-quote">"Shelf replaced my bookmarks, Notion, and Pocket all at once. I can actually find the articles I saved six months ago — which has never happened before."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar" style="background:linear-gradient(135deg,#F97316,#FB923C)">SR</div>
+          <div>
+            <div class="testimonial-name">Sara Rodrigues</div>
+            <div class="testimonial-role">Product Designer at Loom</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial">
+        <p class="testimonial-quote">"I do deep research for a living. Shelf is the first tool that actually keeps up. The full-text search across everything I've saved is incredible."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar" style="background:linear-gradient(135deg,#6366F1,#818CF8)">MK</div>
+          <div>
+            <div class="testimonial-name">Marcus Kim</div>
+            <div class="testimonial-role">Research Analyst at Andreessen Horowitz</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial">
+        <p class="testimonial-quote">"Our whole team uses Shelf to build shared research collections. It's become the single source of truth for product research across the company."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar" style="background:linear-gradient(135deg,#10B981,#34D399)">AL</div>
+          <div>
+            <div class="testimonial-name">Aiko Lee</div>
+            <div class="testimonial-role">Head of Product at Linear</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing">
+    <div class="section-center">
+      <div class="section-label">Pricing</div>
+      <h2 class="section-heading">Simple, transparent pricing</h2>
+      <p class="section-sub">Start free. Upgrade when you're ready. No hidden fees, no surprise charges.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="pricing-name">Free</div>
+        <div class="pricing-price">$0<span> / month</span></div>
+        <div class="pricing-desc">For individuals building their first library.</div>
+        <ul class="pricing-features">
+          <li>500 saved items</li>
+          <li>3 collections</li>
+          <li>Browser extension</li>
+          <li>Full-text search</li>
+          <li>7-day reading history</li>
+        </ul>
+        <a href="/auth/register" class="pricing-btn pricing-btn-outline">Get started free</a>
+      </div>
+      <div class="pricing-card featured">
+        <div class="pricing-badge">Most popular</div>
+        <div class="pricing-name">Pro</div>
+        <div class="pricing-price">$9<span> / month</span></div>
+        <div class="pricing-desc">For power users who want unlimited everything.</div>
+        <ul class="pricing-features">
+          <li>Unlimited saves</li>
+          <li>Unlimited collections</li>
+          <li>AI-powered discovery</li>
+          <li>Highlights &amp; notes</li>
+          <li>Offline reading</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="/auth/register" class="pricing-btn pricing-btn-fill">Start 14-day free trial</a>
+      </div>
+      <div class="pricing-card">
+        <div class="pricing-name">Team</div>
+        <div class="pricing-price">$19<span> / user / month</span></div>
+        <div class="pricing-desc">For teams building shared knowledge bases.</div>
+        <ul class="pricing-features">
+          <li>Everything in Pro</li>
+          <li>Shared collections</li>
+          <li>Team highlights</li>
+          <li>Admin controls</li>
+          <li>SSO / SAML</li>
+          <li>Dedicated support</li>
+        </ul>
+        <a href="/contact" class="pricing-btn pricing-btn-outline">Contact sales</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <div class="cta-inner">
+      <h2>Stop losing great content to forgotten tabs</h2>
+      <p>Join 12,400+ people who use Shelf to build a personal knowledge library that actually grows with them.</p>
+      <a href="/auth/register" class="btn-hero">Start organizing for free</a>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="../../../assets/logos/logo-wordmark-dark.svg" alt="Shelf" style="height:28px" />
+        <p>Your digital content, beautifully organized. Save, collect, and rediscover everything that matters.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="/changelog">Changelog</a></li>
+          <li><a href="/roadmap">Roadmap</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="/docs">Docs</a></li>
+          <li><a href="/blog">Blog</a></li>
+          <li><a href="/api">API</a></li>
+          <li><a href="/status">Status</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="/about">About</a></li>
+          <li><a href="/privacy">Privacy</a></li>
+          <li><a href="/terms">Terms</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Shelf. All rights reserved.</span>
+      <span>Built by Assimetria</span>
+    </div>
+  </footer>
+
+</body>
+</html>
