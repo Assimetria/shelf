@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shelf — Sign in</title>
+  <link rel="icon" href="./favicons/favicon.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --orange: #F97316;
+      --orange-light: #FB923C;
+      --indigo: #6366F1;
+      --indigo-light: #818CF8;
+      --bg: #0a0a12;
+      --surface: #111120;
+      --surface-2: #1a1a2e;
+      --border: #1e1e30;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-subtle: #64748b;
+      --error: #ef4444;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* LEFT PANEL — form */
+    .auth-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 3rem 4rem;
+      min-height: 100vh;
+    }
+
+    .auth-inner {
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .auth-logo {
+      display: block;
+      margin-bottom: 2.5rem;
+    }
+
+    .auth-logo img {
+      height: 28px;
+    }
+
+    .auth-heading {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+
+    .auth-sub {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+    }
+
+    .auth-sub a {
+      color: var(--orange-light);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .auth-sub a:hover { text-decoration: underline; }
+
+    /* OAUTH */
+    .oauth-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .oauth-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .oauth-btn:hover {
+      border-color: var(--text-subtle);
+      color: var(--text);
+    }
+
+    .oauth-icon {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    /* DIVIDER */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 1.5rem 0;
+      color: var(--text-subtle);
+      font-size: 0.8rem;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* FORM */
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: var(--text);
+      font-family: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+
+    input::placeholder { color: var(--text-subtle); }
+
+    input:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px rgba(249,115,22,0.15);
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-addon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-subtle);
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+    }
+
+    .form-hint {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 0.4rem;
+    }
+
+    .form-hint a {
+      font-size: 0.8rem;
+      color: var(--text-subtle);
+      text-decoration: none;
+    }
+    .form-hint a:hover { color: var(--orange-light); }
+
+    .error-msg {
+      font-size: 0.8rem;
+      color: var(--error);
+      margin-top: 0.35rem;
+      display: none;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 0.75rem;
+      background: var(--orange);
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+      margin-top: 0.5rem;
+    }
+    .btn-submit:hover {
+      background: var(--orange-light);
+      transform: translateY(-1px);
+    }
+    .btn-submit:active { transform: none; }
+
+    .terms {
+      margin-top: 1.25rem;
+      font-size: 0.75rem;
+      color: var(--text-subtle);
+      text-align: center;
+      line-height: 1.5;
+    }
+    .terms a {
+      color: var(--text-muted);
+      text-decoration: underline;
+    }
+
+    /* TAB TOGGLE (sign in / sign up) */
+    .auth-tabs {
+      display: flex;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 2rem;
+      gap: 4px;
+    }
+
+    .auth-tab {
+      flex: 1;
+      padding: 0.55rem;
+      border-radius: 7px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+      color: var(--text-subtle);
+      transition: all 0.2s;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+    }
+
+    .auth-tab.active {
+      background: var(--surface-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    /* RIGHT PANEL — brand */
+    .brand-panel {
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .brand-panel::before {
+      content: '';
+      position: absolute;
+      top: -30%;
+      right: -20%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(249,115,22,0.12) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .brand-panel::after {
+      content: '';
+      position: absolute;
+      bottom: -20%;
+      left: -10%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(99,102,241,0.1) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .brand-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      max-width: 440px;
+    }
+
+    .brand-icon {
+      width: 80px;
+      height: 80px;
+      background: rgba(249,115,22,0.1);
+      border: 1px solid rgba(249,115,22,0.2);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 2rem;
+    }
+
+    .brand-icon img {
+      width: 48px;
+      height: 48px;
+    }
+
+    .brand-quote {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.4;
+      margin-bottom: 1.5rem;
+    }
+
+    .brand-quote span {
+      background: linear-gradient(135deg, #F97316 0%, #6366F1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .brand-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 2.5rem;
+      width: 100%;
+    }
+
+    .stat {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--orange-light);
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-subtle);
+      margin-top: 0.2rem;
+    }
+
+    .testimonial-mini {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-top: 2rem;
+      text-align: left;
+      width: 100%;
+    }
+
+    .testimonial-mini p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 0.75rem;
+    }
+
+    .testimonial-mini-author {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .mini-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(249,115,22,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--orange-light);
+      flex-shrink: 0;
+    }
+
+    .mini-name {
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .mini-role {
+      font-size: 0.7rem;
+      color: var(--text-subtle);
+    }
+
+    @media (max-width: 768px) {
+      body { grid-template-columns: 1fr; }
+      .brand-panel { display: none; }
+      .auth-panel { padding: 2rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- FORM PANEL -->
+  <div class="auth-panel">
+    <div class="auth-inner">
+      <a href="/" class="auth-logo">
+        <img src="./logo-dark.svg" alt="Shelf" />
+      </a>
+
+      <!-- TAB TOGGLE -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-signin">Sign in</button>
+        <button class="auth-tab" id="tab-signup">Sign up</button>
+      </div>
+
+      <!-- SIGN IN FORM -->
+      <div id="form-signin">
+        <h1 class="auth-heading">Welcome back</h1>
+        <p class="auth-sub">Don't have an account? <a href="#" id="switch-signup">Sign up free</a></p>
+
+        <!-- OAuth -->
+        <div class="oauth-row">
+          <a href="/auth/google" class="oauth-btn">
+            <svg class="oauth-icon" viewBox="0 0 24 24" fill="none">
+              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+            </svg>
+            Google
+          </a>
+          <a href="/auth/github" class="oauth-btn">
+            <svg class="oauth-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+            </svg>
+            GitHub
+          </a>
+        </div>
+
+        <div class="divider">or continue with email</div>
+
+        <form>
+          <div class="form-group">
+            <label for="email">Email address</label>
+            <input type="email" id="email" placeholder="you@company.com" autocomplete="email" />
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-wrapper">
+              <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password" />
+              <button type="button" class="input-addon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+            <div class="form-hint">
+              <span></span>
+              <a href="/forgot-password">Forgot password?</a>
+            </div>
+          </div>
+          <button type="submit" class="btn-submit">Sign in to Shelf</button>
+        </form>
+      </div>
+
+      <!-- SIGN UP FORM -->
+      <div id="form-signup" style="display:none;">
+        <h1 class="auth-heading">Create your library</h1>
+        <p class="auth-sub">Already have an account? <a href="#" id="switch-signin">Sign in</a></p>
+
+        <!-- OAuth -->
+        <div class="oauth-row">
+          <a href="/auth/google" class="oauth-btn">
+            <svg class="oauth-icon" viewBox="0 0 24 24" fill="none">
+              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+            </svg>
+            Google
+          </a>
+          <a href="/auth/github" class="oauth-btn">
+            <svg class="oauth-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+            </svg>
+            GitHub
+          </a>
+        </div>
+
+        <div class="divider">or sign up with email</div>
+
+        <form>
+          <div class="form-group">
+            <label for="name">Full name</label>
+            <input type="text" id="name" placeholder="Jane Smith" autocomplete="name" />
+          </div>
+          <div class="form-group">
+            <label for="email-reg">Email address</label>
+            <input type="email" id="email-reg" placeholder="you@company.com" autocomplete="email" />
+          </div>
+          <div class="form-group">
+            <label for="password-reg">Password</label>
+            <div class="input-wrapper">
+              <input type="password" id="password-reg" placeholder="At least 8 characters" autocomplete="new-password" />
+              <button type="button" class="input-addon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="btn-submit">Create free account</button>
+          <p class="terms">By signing up, you agree to our <a href="/terms">Terms of Service</a> and <a href="/privacy">Privacy Policy</a>.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- BRAND PANEL -->
+  <div class="brand-panel">
+    <div class="brand-content">
+      <div class="brand-icon">
+        <img src="./logo-mark.svg" alt="Shelf" />
+      </div>
+      <h2 class="brand-quote">
+        Stop losing links.<br />
+        <span>Start building your library.</span>
+      </h2>
+      <p style="font-size:0.9rem; color: var(--text-muted); line-height:1.7;">
+        Everything you save, forever findable. One search away from any article, document, or resource you've ever collected.
+      </p>
+
+      <div class="brand-stats">
+        <div class="stat">
+          <div class="stat-value">2.4K</div>
+          <div class="stat-label">Users</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">4.1M</div>
+          <div class="stat-label">Items saved</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">99.9%</div>
+          <div class="stat-label">Uptime</div>
+        </div>
+      </div>
+
+      <div class="testimonial-mini">
+        <p>"Shelf changed how I work. My research is finally organized and I can actually find things when I need them."</p>
+        <div class="testimonial-mini-author">
+          <div class="mini-avatar">KL</div>
+          <div>
+            <div class="mini-name">Katia Larsson</div>
+            <div class="mini-role">Product Manager, Figma</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tabSignin = document.getElementById('tab-signin');
+    const tabSignup = document.getElementById('tab-signup');
+    const formSignin = document.getElementById('form-signin');
+    const formSignup = document.getElementById('form-signup');
+    const switchSignup = document.getElementById('switch-signup');
+    const switchSignin = document.getElementById('switch-signin');
+
+    function showSignin() {
+      tabSignin.classList.add('active');
+      tabSignup.classList.remove('active');
+      formSignin.style.display = 'block';
+      formSignup.style.display = 'none';
+    }
+
+    function showSignup() {
+      tabSignup.classList.add('active');
+      tabSignin.classList.remove('active');
+      formSignup.style.display = 'block';
+      formSignin.style.display = 'none';
+    }
+
+    tabSignin.addEventListener('click', showSignin);
+    tabSignup.addEventListener('click', showSignup);
+    if (switchSignup) switchSignup.addEventListener('click', (e) => { e.preventDefault(); showSignup(); });
+    if (switchSignin) switchSignin.addEventListener('click', (e) => { e.preventDefault(); showSignin(); });
+  </script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 120" width="480" height="120" role="img" aria-label="Shelf">
+  <title>Shelf</title>
+  <defs>
+    <linearGradient id="darkMarkGradTop" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F97316" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#FB923C" stop-opacity="1"/>
+    </linearGradient>
+    <linearGradient id="darkMarkGradMid" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F97316" stop-opacity="0.90"/>
+      <stop offset="100%" stop-color="#FDBA74" stop-opacity="0.80"/>
+    </linearGradient>
+    <linearGradient id="darkMarkGradBot" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F97316" stop-opacity="0.68"/>
+      <stop offset="100%" stop-color="#FED7AA" stop-opacity="0.55"/>
+    </linearGradient>
+    <linearGradient id="darkSupportGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#6366F1" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#818CF8" stop-opacity="0.65"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ── Mark (96×96 icon centred in 120px height, left-aligned) ── -->
+
+  <!-- Vertical support pillar -->
+  <rect x="12" y="12" width="6" height="96" rx="3" fill="url(#darkSupportGrad)"/>
+
+  <!-- Top shelf -->
+  <rect x="12" y="12" width="68" height="12" rx="5" fill="url(#darkMarkGradTop)"/>
+
+  <!-- Items on top shelf (small book spines) -->
+  <rect x="22" y="3"  width="4"  height="9"  rx="2" fill="#6366F1" opacity="0.85"/>
+  <rect x="28" y="4"  width="3"  height="8"  rx="1" fill="#818CF8" opacity="0.70"/>
+  <rect x="33" y="2"  width="5"  height="10" rx="2" fill="#6366F1" opacity="0.90"/>
+  <rect x="40" y="4"  width="3"  height="8"  rx="1" fill="#A5B4FC" opacity="0.65"/>
+  <rect x="45" y="3"  width="4"  height="9"  rx="2" fill="#6366F1" opacity="0.75"/>
+  <rect x="51" y="5"  width="3"  height="7"  rx="1" fill="#818CF8" opacity="0.55"/>
+  <rect x="56" y="3"  width="4"  height="9"  rx="2" fill="#6366F1" opacity="0.80"/>
+  <rect x="62" y="4"  width="3"  height="8"  rx="1" fill="#A5B4FC" opacity="0.65"/>
+
+  <!-- Middle shelf -->
+  <rect x="12" y="54" width="86" height="12" rx="5" fill="url(#darkMarkGradMid)"/>
+
+  <!-- Items on middle shelf -->
+  <rect x="22" y="45" width="4"  height="9"  rx="2" fill="#6366F1" opacity="0.80"/>
+  <rect x="28" y="46" width="3"  height="8"  rx="1" fill="#818CF8" opacity="0.65"/>
+  <rect x="33" y="44" width="5"  height="10" rx="2" fill="#6366F1" opacity="0.85"/>
+  <rect x="40" y="46" width="3"  height="8"  rx="1" fill="#A5B4FC" opacity="0.60"/>
+  <rect x="45" y="44" width="4"  height="9"  rx="2" fill="#F97316" opacity="0.75"/>
+  <rect x="51" y="47" width="3"  height="7"  rx="1" fill="#6366F1" opacity="0.55"/>
+  <rect x="56" y="45" width="4"  height="9"  rx="2" fill="#818CF8" opacity="0.70"/>
+  <rect x="62" y="46" width="3"  height="8"  rx="1" fill="#A5B4FC" opacity="0.60"/>
+  <rect x="67" y="45" width="4"  height="9"  rx="2" fill="#6366F1" opacity="0.75"/>
+  <rect x="73" y="47" width="3"  height="7"  rx="1" fill="#818CF8" opacity="0.55"/>
+  <rect x="78" y="45" width="4"  height="9"  rx="2" fill="#A5B4FC" opacity="0.65"/>
+  <rect x="84" y="46" width="3"  height="8"  rx="1" fill="#6366F1" opacity="0.60"/>
+
+  <!-- Bottom shelf -->
+  <rect x="12" y="96" width="76" height="12" rx="5" fill="url(#darkMarkGradBot)"/>
+
+  <!-- Items on bottom shelf -->
+  <rect x="22" y="87" width="4"  height="9"  rx="2" fill="#6366F1" opacity="0.70"/>
+  <rect x="28" y="88" width="3"  height="8"  rx="1" fill="#818CF8" opacity="0.55"/>
+  <rect x="33" y="86" width="5"  height="10" rx="2" fill="#6366F1" opacity="0.75"/>
+  <rect x="40" y="88" width="3"  height="8"  rx="1" fill="#A5B4FC" opacity="0.55"/>
+  <rect x="45" y="87" width="4"  height="9"  rx="2" fill="#F97316" opacity="0.65"/>
+  <rect x="51" y="89" width="3"  height="7"  rx="1" fill="#6366F1" opacity="0.50"/>
+  <rect x="56" y="87" width="4"  height="9"  rx="2" fill="#818CF8" opacity="0.65"/>
+
+  <!-- Floor line -->
+  <rect x="8" y="108" width="92" height="2" rx="1" fill="#F97316" opacity="0.25"/>
+
+  <!-- ── Wordmark: "Shelf" in white for dark backgrounds ── -->
+  <!-- Letter S -->
+  <text x="136" y="82"
+        font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+        font-size="56" font-weight="700" letter-spacing="-2"
+        fill="#FFFFFF">Shelf</text>
+
+  <!-- Accent underline dot after wordmark -->
+  <circle cx="344" cy="80" r="5" fill="#F97316" opacity="0.90"/>
+</svg>
