@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Shelf mark on dark background — three shelves in orange -->
+
+  <!-- Top shelf (narrowest) -->
+  <rect x="156" y="152" width="200" height="44" rx="22" fill="#FB923C"/>
+
+  <!-- Middle shelf -->
+  <rect x="106" y="234" width="300" height="44" rx="22" fill="#FB923C" opacity="0.82"/>
+
+  <!-- Bottom shelf (widest) -->
+  <rect x="56" y="316" width="400" height="44" rx="22" fill="#FB923C" opacity="0.62"/>
+</svg>

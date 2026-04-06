@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 56" width="280" height="56">
+  <!-- Shelf wordmark for dark backgrounds — mark + text in light colours -->
+
+  <!-- Mark (28px tall, centred in 56px) -->
+  <!-- Top shelf -->
+  <rect x="3" y="10" width="22" height="6" rx="3" fill="#FB923C"/>
+  <!-- Middle shelf -->
+  <rect x="0" y="21" width="28" height="6" rx="3" fill="#FB923C" opacity="0.82"/>
+  <!-- Bottom shelf -->
+  <rect x="-3" y="32" width="34" height="6" rx="3" fill="#FB923C" opacity="0.62"/>
+
+  <!-- "Shelf" text in white -->
+  <text x="44" y="39"
+        font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+        font-size="26" font-weight="700" letter-spacing="-0.5"
+        fill="#F9FAFB">Shelf</text>
+</svg>
