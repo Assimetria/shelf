@@ -1,13 +1,81 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <!-- Shelf mark: three horizontal bars (shelves) increasing in width, top to bottom -->
-  <!-- Evokes a library shelf / organised knowledge stack -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Shelf logo mark">
+  <title>Shelf</title>
+  <defs>
+    <!-- Primary orange gradient for shelves -->
+    <linearGradient id="shelfGradTop" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F97316" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#FB923C" stop-opacity="1"/>
+    </linearGradient>
+    <linearGradient id="shelfGradMid" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F97316" stop-opacity="0.92"/>
+      <stop offset="100%" stop-color="#FDBA74" stop-opacity="0.82"/>
+    </linearGradient>
+    <linearGradient id="shelfGradBot" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F97316" stop-opacity="0.72"/>
+      <stop offset="100%" stop-color="#FED7AA" stop-opacity="0.58"/>
+    </linearGradient>
+    <!-- Accent indigo gradient for vertical support -->
+    <linearGradient id="supportGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#6366F1" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#818CF8" stop-opacity="0.7"/>
+    </linearGradient>
+    <!-- Soft glow filter -->
+    <filter id="glowOrange" x="-20%" y="-50%" width="140%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
+      <feComposite in="blur" in2="SourceGraphic" operator="over"/>
+    </filter>
+    <filter id="glowAccent" x="-20%" y="-50%" width="140%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+      <feComposite in="blur" in2="SourceGraphic" operator="over"/>
+    </filter>
+  </defs>
 
-  <!-- Top shelf (narrowest) -->
-  <rect x="156" y="152" width="200" height="44" rx="22" fill="#F97316"/>
+  <!-- Vertical left support pillar — accent indigo -->
+  <rect x="120" y="108" width="20" height="296" rx="10" fill="url(#supportGrad)"/>
 
-  <!-- Middle shelf -->
-  <rect x="106" y="234" width="300" height="44" rx="22" fill="#F97316" opacity="0.82"/>
+  <!-- Top shelf — full orange, narrowest span -->
+  <rect x="120" y="108" width="224" height="40" rx="16" fill="url(#shelfGradTop)"/>
 
-  <!-- Bottom shelf (widest) -->
-  <rect x="56" y="316" width="400" height="44" rx="22" fill="#F97316" opacity="0.62"/>
+  <!-- Decorative items resting on top shelf (books / objects) -->
+  <rect x="156" y="76" width="14" height="32" rx="5" fill="#6366F1" opacity="0.85"/>
+  <rect x="176" y="80" width="10" height="28" rx="4" fill="#818CF8" opacity="0.70"/>
+  <rect x="192" y="72" width="16" height="36" rx="5" fill="#6366F1" opacity="0.90"/>
+  <rect x="214" y="79" width="11" height="29" rx="4" fill="#A5B4FC" opacity="0.60"/>
+  <rect x="231" y="74" width="13" height="34" rx="5" fill="#6366F1" opacity="0.75"/>
+  <rect x="250" y="82" width="9"  height="26" rx="3" fill="#818CF8" opacity="0.55"/>
+  <rect x="265" y="76" width="15" height="32" rx="5" fill="#6366F1" opacity="0.80"/>
+  <rect x="286" y="80" width="10" height="28" rx="4" fill="#A5B4FC" opacity="0.65"/>
+
+  <!-- Middle shelf — slightly wider, orange fading -->
+  <rect x="120" y="228" width="288" height="40" rx="16" fill="url(#shelfGradMid)"/>
+
+  <!-- Decorative items on middle shelf -->
+  <rect x="156" y="196" width="14" height="32" rx="5" fill="#6366F1" opacity="0.80"/>
+  <rect x="176" y="200" width="10" height="28" rx="4" fill="#818CF8" opacity="0.65"/>
+  <rect x="192" y="192" width="16" height="36" rx="5" fill="#6366F1" opacity="0.85"/>
+  <rect x="214" y="199" width="11" height="29" rx="4" fill="#A5B4FC" opacity="0.55"/>
+  <rect x="231" y="194" width="13" height="34" rx="5" fill="#F97316" opacity="0.70"/>
+  <rect x="250" y="202" width="9"  height="26" rx="3" fill="#6366F1" opacity="0.50"/>
+  <rect x="265" y="196" width="15" height="32" rx="5" fill="#6366F1" opacity="0.75"/>
+  <rect x="286" y="200" width="10" height="28" rx="4" fill="#818CF8" opacity="0.60"/>
+  <rect x="302" y="195" width="14" height="33" rx="5" fill="#A5B4FC" opacity="0.70"/>
+  <rect x="322" y="203" width="9"  height="25" rx="3" fill="#6366F1" opacity="0.50"/>
+  <rect x="337" y="196" width="12" height="32" rx="4" fill="#818CF8" opacity="0.65"/>
+  <rect x="355" y="200" width="10" height="28" rx="3" fill="#A5B4FC" opacity="0.55"/>
+
+  <!-- Bottom shelf — widest, most transparent orange -->
+  <rect x="120" y="348" width="272" height="40" rx="16" fill="url(#shelfGradBot)"/>
+
+  <!-- Decorative items on bottom shelf -->
+  <rect x="156" y="316" width="14" height="32" rx="5" fill="#6366F1" opacity="0.70"/>
+  <rect x="176" y="320" width="10" height="28" rx="4" fill="#818CF8" opacity="0.55"/>
+  <rect x="192" y="312" width="16" height="36" rx="5" fill="#6366F1" opacity="0.75"/>
+  <rect x="214" y="319" width="11" height="29" rx="4" fill="#A5B4FC" opacity="0.50"/>
+  <rect x="231" y="314" width="13" height="34" rx="5" fill="#F97316" opacity="0.65"/>
+  <rect x="250" y="322" width="9"  height="26" rx="3" fill="#6366F1" opacity="0.45"/>
+  <rect x="265" y="316" width="15" height="32" rx="5" fill="#818CF8" opacity="0.65"/>
+  <rect x="286" y="320" width="10" height="28" rx="4" fill="#A5B4FC" opacity="0.55"/>
+
+  <!-- Floor line below bottom shelf -->
+  <rect x="100" y="388" width="312" height="6" rx="3" fill="#F97316" opacity="0.22"/>
 </svg>
